@@ -26,6 +26,9 @@ namespace ProjectKai.Core
             if (_bossDefeated) return;
             _bossDefeated = true;
 
+            // 2장 해금
+            GameState.Instance?.UnlockChapter(2);
+
             StartCoroutine(BossDefeatSequence());
         }
 

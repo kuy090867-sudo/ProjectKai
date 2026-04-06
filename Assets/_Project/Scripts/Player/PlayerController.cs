@@ -285,6 +285,12 @@ namespace ProjectKai.Player
             Rb.AddForce(direction.normalized * force, ForceMode2D.Impulse);
         }
 
+        public void Heal(float amount)
+        {
+            if (!IsAlive) return;
+            CurrentHealth = Mathf.Min(CurrentHealth + amount, _maxHealth);
+        }
+
         private void OnDeath()
         {
             Debug.Log("Player died!");

@@ -183,6 +183,9 @@ namespace ProjectKai.Enemy
             GameFeel.Instance?.HitStop(0.2f);
             GameFeel.Instance?.CameraShake(0.25f, 0.5f);
 
+            // 3장 해금
+            Core.GameState.Instance?.UnlockChapter(3);
+
             yield return new WaitForSecondsRealtime(0.5f);
 
             // 기사단장 대사
