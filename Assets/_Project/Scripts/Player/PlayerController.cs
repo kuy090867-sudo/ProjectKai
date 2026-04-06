@@ -249,11 +249,12 @@ namespace ProjectKai.Player
 
             ApplyKnockback(knockbackDir, knockbackForce);
 
-            // 피격 리액션 (3채널)
+            // 피격 리액션 (3채널 + 비네팅)
             Core.AudioManager.Instance?.PlaySFX("hit", 0.7f);
             Core.GameFeel.Instance?.CameraShake(0.1f, 0.12f);
             Core.GameFeel.Instance?.HitStop(0.04f);
             SpriteAnim?.ForcePlay("hit");
+            UI.DamageVignette.Instance?.Flash();
 
             if (!IsAlive)
             {
