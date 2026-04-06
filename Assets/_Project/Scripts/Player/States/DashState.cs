@@ -15,6 +15,9 @@ namespace ProjectKai.Player.States
             Player.SpriteAnim?.Play("dash");
             Core.AudioManager.Instance?.PlaySFX("dash", 0.4f);
 
+            // VFX: 대시 시작 먼지
+            Core.VFXManager.Instance?.DustPuff(Player.transform.position);
+
             // 대시 무적 + 트레일
             Player.IsInvincible = true;
             var trail = Player.GetComponentInChildren<TrailRenderer>();

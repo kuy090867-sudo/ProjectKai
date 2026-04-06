@@ -53,6 +53,10 @@ namespace ProjectKai.Player.States
             {
                 Player.ResetGravity();
                 Core.AudioManager.Instance?.PlaySFX("land", 0.4f);
+
+                // VFX: 착지 먼지
+                Core.VFXManager.Instance?.DustPuff(Player.transform.position);
+
                 // 높은 곳에서 떨어졌을 때 착지감
                 if (StateTimer > 0.4f)
                     Core.GameFeel.Instance?.CameraShake(0.04f, 0.08f);

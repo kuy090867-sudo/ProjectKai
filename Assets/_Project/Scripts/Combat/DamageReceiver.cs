@@ -71,9 +71,16 @@ namespace ProjectKai.Combat
             // 청각: 타격음
             Core.AudioManager.Instance?.PlaySFX("hit", 0.6f);
 
+            // VFX: 타격 스파크
+            Core.VFXManager.Instance?.HitEffect(transform.position);
+
             // 촉각: 히트스톱 + 카메라쉐이크
             if (!IsAlive)
             {
+                // VFX: 사망 파편 폭발
+                Color deathColor = _sr != null ? _originalColor : Color.white;
+                Core.VFXManager.Instance?.EnemyDeathEffect(transform.position, deathColor);
+
                 // === 사망 연출 (강화된 3채널) ===
                 Core.AudioManager.Instance?.PlaySFX("enemy_death", 0.8f);
                 Core.GameFeel.Instance?.CameraShake(0.25f, 0.3f);

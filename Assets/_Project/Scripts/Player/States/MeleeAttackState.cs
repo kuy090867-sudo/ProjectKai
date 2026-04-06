@@ -87,6 +87,11 @@ namespace ProjectKai.Player.States
                 if (hits > 0)
                 {
                     int step = _comboSystem.CurrentStep;
+
+                    // VFX: 콤보 단계별 슬래시 이펙트
+                    Core.VFXManager.Instance?.SlashEffect(hitOrigin, step, Player.FacingDirection);
+                    Core.VFXManager.Instance?.HitEffect(hitOrigin);
+
                     if (step >= 2) // 3타 (강타)
                     {
                         Core.GameFeel.Instance?.CameraShake(0.15f, 0.15f);

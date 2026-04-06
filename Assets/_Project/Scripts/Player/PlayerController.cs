@@ -178,6 +178,27 @@ namespace ProjectKai.Player
                 Core.AudioManager.Instance?.PlaySFX("dash", 0.3f);
                 Debug.Log($"[Player] 무기 전환: {(IsMelee ? "검" : "총")}");
             };
+
+            // 대시 잔상용 TrailRenderer 자동 추가
+            SetupDashTrail();
+        }
+
+        private void SetupDashTrail()
+        {
+            var spriteObj = GetComponentInChildren<SpriteRenderer>();
+            if (spriteObj == null) return;
+            var trail = spriteObj.GetComponent<TrailRenderer>();
+            if (trail != null) return;
+
+            trail = spriteObj.gameObject.AddComponent<TrailRenderer>();
+            trail.time = 0.15f;
+            trail.startWidth = 0.4f;
+            trail.endWidth = 0.05f;
+            trail.startColor = new Color(0.4f, 0.6f, 1f, 0.6f);
+            trail.endColor = new Color(0.4f, 0.6f, 1f, 0f);
+            trail.material = new Material(Shader.Find("Sprites/Default"));
+            trail.sortingOrder = 4;
+            trail.emitting = false;
         }
 
         private void Update()
