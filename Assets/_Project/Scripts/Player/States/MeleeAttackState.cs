@@ -1,0 +1,124 @@
+using UnityEngine;
+using ProjectKai.Combat;
+using ProjectKai.Data;
+
+namespace ProjectKai.Player.States
+{
+    public class MeleeAttackState : PlayerState
+    {
+        private ComboSystem _comboSystem;
+        private DamageDealer _damageDealer;
+        private ComboStep _currentStep;
+        private bool _hasHit;
+        private LayerMask _enemyLayer;
+
+        public MeleeAttackState(PlayerController player, ComboSystem comboSystem,
+            DamageDealer damageDealer, LayerMask enemyLayer) : base(player)
+        {
+            _comboSystem = comboSystem;
+            _damageDealer = damageDealer;
+            _enemyLayer = enemyLayer;
+        }
+
+        public override void Enter()
+        {
+            base.Enter();
+
+            _currentStep = _comboSystem.AdvanceCombo();
+            if (_currentStep == null)
+            {
+                Player.StateMachine.ChangeState(Player.IdleState);
+                return;
+            }
+
+            _hasHit = false;
+
+            // 공격 시 약간 전진
+            if (_currentStep.moveForwardForce > 0f)
+            {
+                Player.SetVelocityX(Player.FacingDirection * _currentStep.moveForwardForce);
+            }
+            else
+            {
+                Player.SetVelocityX(0f);
+            }
+
+            Player.SpriteAnim?.Play("hit", 12f, false);
+            Core.AudioManager.Instance?.PlaySFX("sword_swing", 0.5f);
+
+            _damageDealer.Activate(
+                _currentStep.damage,
+                _currentStep.knockbackForce,
+                new Vector2(Player.FacingDirection, 0f),
+                _enemyLayer
+            );
+        }
+
+        public override void Execute()
+        {
+            base.Execute();
+
+            // 히트 판정 타이밍
+            if (!_hasHit && StateTimer >= _currentStep.hitStartTime && StateTimer <= _currentStep.hitEndTime)
+            {
+                Vector2 hitOrigin = (Vector2)Player.transform.position +
+                    new Vector2(_currentStep.hitboxOffset.x * Player.FacingDirection, _currentStep.hitboxOffset.y);
+
+                int hits = _damageDealer.PerformHitCheck(hitOrigin, _currentStep.hitboxSize);
+                _hasHit = true;
+
+                // 콤보 단계별 이펙트 강도
+                if (hits > 0)
+                {
+                    int step = _comboSystem.CurrentStep;
+                    if (step >= 2) // 3타 (강타)
+                    {
+                        Core.GameFeel.Instance?.CameraShake(0.15f, 0.15f);
+                        Core.GameFeel.Instance?.HitStop(0.08f);
+                        Core.GameFeel.Instance?.CameraZoom(4.5f, 0.3f);
+                    }
+                    else if (step == 1) // 2타
+                    {
+                        Core.GameFeel.Instance?.CameraShake(0.1f, 0.1f);
+                        Core.GameFeel.Instance?.HitStop(0.05f);
+                    }
+                    // 1타는 DamageReceiver에서 기본 처리
+                }
+            }
+
+            // 공격 모션 완료
+            if (StateTimer >= _currentStep.duration)
+            {
+                _comboSystem.AllowAdvance();
+
+                // 버퍼에 다음 공격 입력이 있으면 연속 콤보
+                if (Player.InputBuffer.HasInput(BufferedInput.Attack))
+                {
+                    Player.InputBuffer.Consume();
+                    StateTimer = 0f;
+                    Enter();
+                    return;
+                }
+
+                ReturnToMovementState();
+                return;
+            }
+        }
+
+        public override void Exit()
+        {
+            base.Exit();
+            _damageDealer.Deactivate();
+        }
+
+        private void ReturnToMovementState()
+        {
+            if (!Player.GroundCheck.IsGrounded)
+                Player.StateMachine.ChangeState(Player.FallState);
+            else if (Mathf.Abs(Player.Input.MoveInput.x) > 0.1f)
+                Player.StateMachine.ChangeState(Player.RunState);
+            else
+                Player.StateMachine.ChangeState(Player.IdleState);
+        }
+    }
+}
