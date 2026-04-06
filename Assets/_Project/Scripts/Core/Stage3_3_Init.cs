@@ -30,6 +30,8 @@ namespace ProjectKai.Core
         private System.Collections.IEnumerator EndingSequence()
         {
             GameFeel.Instance?.KillSlowMotion(1f, 0.1f);
+            GameState.Instance?.CompleteGame();
+            SaveSystem.Save();
             yield return new WaitForSecondsRealtime(1.5f);
 
             var lines = new DialogueLine[]
