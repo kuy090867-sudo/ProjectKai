@@ -49,6 +49,14 @@ namespace ProjectKai.Core
         private bool _dialogueActive;
         private float _interactionRange = 2.0f;
 
+        // 대장장이 NPC 참조
+        private GameObject _blacksmithNpc;
+        private SpriteAnimator _blacksmithAnimator;
+        private GameObject _blacksmithPrompt;
+        private TextMeshPro _blacksmithPromptText;
+        private bool _isPlayerNearBlacksmith;
+        private float _blacksmithRange = 2.0f;
+
         // Hub 장식
         private GameObject _hubDecorations;
 
@@ -77,12 +85,14 @@ namespace ProjectKai.Core
         private void Awake()
         {
             CreateLinaNpc();
+            CreateBlacksmithNpc();
             CreateHubDecorations();
         }
 
         private void Start()
         {
             SetupLinaAnimator();
+            SetupBlacksmithAnimator();
             CreateHubLighting();
             StageProgressUI.Show();
         }
@@ -195,6 +205,118 @@ namespace ProjectKai.Core
         }
 
         // ═══════════════════════════════════════
+        //  대장장이 NPC 생성
+        // ═══════════════════════════════════════
+
+        private void CreateBlacksmithNpc()
+        {
+            var existing = GameObject.Find("NPC_Blacksmith");
+            if (existing != null)
+            {
+                _blacksmithNpc = existing;
+                return;
+            }
+
+            _blacksmithNpc = new GameObject("NPC_Blacksmith");
+
+            // 리나 반대편에 배치 (플레이어 왼쪽)
+            var player = GameObject.FindWithTag("Player");
+            Vector3 npcPos;
+            if (player != null)
+            {
+                npcPos = player.transform.position + new Vector3(-3.5f, 0f, 0f);
+            }
+            else
+            {
+                npcPos = new Vector3(-3.5f, -1f, 0f);
+            }
+            _blacksmithNpc.transform.position = npcPos;
+
+            // SpriteRenderer
+            var sr = _blacksmithNpc.AddComponent<SpriteRenderer>();
+            sr.sortingOrder = 10;
+            sr.color = Color.white;
+
+            // 스프라이트 로드 (dwarf_m)
+            var tex = Resources.Load<Texture2D>("Sprites/NPC/dwarf_m_idle_anim_f0");
+            if (tex != null)
+            {
+                tex.filterMode = FilterMode.Point;
+                sr.sprite = Sprite.Create(tex,
+                    new Rect(0, 0, tex.width, tex.height),
+                    new Vector2(0.5f, 0.5f), 16f);
+            }
+            else
+            {
+                sr.sprite = CreateBlacksmithPlaceholder();
+                Debug.LogWarning("[HubManager] dwarf_m 스프라이트 로드 실패. 플레이스홀더 사용.");
+            }
+
+            // BoxCollider2D
+            var col = _blacksmithNpc.AddComponent<BoxCollider2D>();
+            col.isTrigger = true;
+            col.size = new Vector2(_blacksmithRange, _blacksmithRange);
+
+            // 상호작용 프롬프트
+            CreateBlacksmithPrompt();
+
+            Debug.Log("[HubManager] 대장장이 NPC 생성 완료");
+        }
+
+        private void CreateBlacksmithPrompt()
+        {
+            _blacksmithPrompt = new GameObject("BlacksmithPrompt");
+            _blacksmithPrompt.transform.SetParent(_blacksmithNpc.transform);
+            _blacksmithPrompt.transform.localPosition = new Vector3(0f, 1.5f, 0f);
+
+            _blacksmithPromptText = _blacksmithPrompt.AddComponent<TextMeshPro>();
+            _blacksmithPromptText.text = "E: 무기 강화";
+            _blacksmithPromptText.fontSize = 4f;
+            _blacksmithPromptText.color = new Color(1f, 0.7f, 0.3f, 0.9f);
+            _blacksmithPromptText.alignment = TextAlignmentOptions.Center;
+            _blacksmithPromptText.sortingOrder = 100;
+
+            var meshRenderer = _blacksmithPrompt.GetComponent<MeshRenderer>();
+            if (meshRenderer != null)
+                meshRenderer.sortingOrder = 100;
+
+            _blacksmithPrompt.SetActive(false);
+        }
+
+        private Sprite CreateBlacksmithPlaceholder()
+        {
+            var tex = new Texture2D(16, 16);
+            var pixels = new Color[256];
+            // 갈색/주황 대장장이 실루엣
+            for (int y = 0; y < 16; y++)
+            {
+                for (int x = 0; x < 16; x++)
+                {
+                    bool inBody = x >= 3 && x < 13 && y >= 0 && y < 10;
+                    bool inHead = x >= 5 && x < 11 && y >= 10 && y < 16;
+                    pixels[y * 16 + x] = (inBody || inHead)
+                        ? new Color(0.7f, 0.45f, 0.2f, 1f)
+                        : Color.clear;
+                }
+            }
+            tex.SetPixels(pixels);
+            tex.filterMode = FilterMode.Point;
+            tex.Apply();
+            return Sprite.Create(tex, new Rect(0, 0, 16, 16), new Vector2(0.5f, 0.5f), 16f);
+        }
+
+        private void SetupBlacksmithAnimator()
+        {
+            if (_blacksmithNpc == null) return;
+
+            _blacksmithAnimator = _blacksmithNpc.GetComponent<SpriteAnimator>();
+            if (_blacksmithAnimator == null)
+                _blacksmithAnimator = _blacksmithNpc.AddComponent<SpriteAnimator>();
+
+            _blacksmithAnimator.ConfigureEnemy("Sprites/NPC", "dwarf_m");
+        }
+
+        // ═══════════════════════════════════════
         //  SpriteAnimator 설정
         // ═══════════════════════════════════════
 
@@ -219,8 +341,6 @@ namespace ProjectKai.Core
 
         private void Update()
         {
-            if (_linaNpc == null) return;
-
             CheckPlayerProximity();
             HandleInteraction();
             AnimatePrompt();
@@ -232,45 +352,82 @@ namespace ProjectKai.Core
             if (player == null)
             {
                 _isPlayerNear = false;
+                _isPlayerNearBlacksmith = false;
                 if (_interactionPrompt != null)
                     _interactionPrompt.SetActive(false);
+                if (_blacksmithPrompt != null)
+                    _blacksmithPrompt.SetActive(false);
                 return;
             }
 
-            float dist = Vector2.Distance(
-                player.transform.position,
-                _linaNpc.transform.position);
-
-            bool wasNear = _isPlayerNear;
-            _isPlayerNear = dist <= _interactionRange;
-
-            if (_interactionPrompt != null)
+            // 리나 근접 확인
+            if (_linaNpc != null)
             {
-                bool showPrompt = _isPlayerNear && !_dialogueActive;
-                _interactionPrompt.SetActive(showPrompt);
+                float distLina = Vector2.Distance(
+                    player.transform.position,
+                    _linaNpc.transform.position);
+
+                _isPlayerNear = distLina <= _interactionRange;
+
+                if (_interactionPrompt != null)
+                {
+                    bool showPrompt = _isPlayerNear && !_dialogueActive;
+                    _interactionPrompt.SetActive(showPrompt);
+                }
+
+                if (_isPlayerNear)
+                {
+                    var sr = _linaNpc.GetComponent<SpriteRenderer>();
+                    if (sr != null)
+                        sr.flipX = player.transform.position.x < _linaNpc.transform.position.x;
+                }
             }
 
-            // 리나가 플레이어를 바라보도록 flipX
-            if (_isPlayerNear)
+            // 대장장이 근접 확인
+            if (_blacksmithNpc != null)
             {
-                var sr = _linaNpc.GetComponent<SpriteRenderer>();
-                if (sr != null)
+                float distSmith = Vector2.Distance(
+                    player.transform.position,
+                    _blacksmithNpc.transform.position);
+
+                _isPlayerNearBlacksmith = distSmith <= _blacksmithRange;
+
+                if (_blacksmithPrompt != null)
                 {
-                    sr.flipX = player.transform.position.x < _linaNpc.transform.position.x;
+                    // WeaponUpgradeUI가 열려있으면 프롬프트 숨김
+                    bool upgradeOpen = WeaponUpgradeUI.Instance != null &&
+                                       WeaponUpgradeUI.Instance.gameObject.GetComponentInChildren<Canvas>() != null &&
+                                       WeaponUpgradeUI.Instance.transform.GetChild(0).gameObject.activeSelf;
+                    bool showPrompt = _isPlayerNearBlacksmith && !upgradeOpen;
+                    _blacksmithPrompt.SetActive(showPrompt);
+                }
+
+                if (_isPlayerNearBlacksmith)
+                {
+                    var sr = _blacksmithNpc.GetComponent<SpriteRenderer>();
+                    if (sr != null)
+                        sr.flipX = player.transform.position.x < _blacksmithNpc.transform.position.x;
                 }
             }
         }
 
         private void HandleInteraction()
         {
-            if (!_isPlayerNear || _dialogueActive) return;
-
-            // DialogueSystem이 활성 상태면 대화 시작 안 함
-            if (DialogueSystem.Instance != null && DialogueSystem.Instance.IsActive) return;
-
             var keyboard = Keyboard.current;
-            if (keyboard != null && keyboard.eKey.wasPressedThisFrame)
+            if (keyboard == null || !keyboard.eKey.wasPressedThisFrame) return;
+
+            // 대장장이 상호작용 우선 (WeaponUpgradeUI가 닫혀있을 때)
+            if (_isPlayerNearBlacksmith && !_dialogueActive)
             {
+                WeaponUpgradeUI.Show();
+                Debug.Log("[HubManager] 대장장이 상호작용 -> 무기 강화 UI 표시");
+                return;
+            }
+
+            // 리나 상호작용
+            if (_isPlayerNear && !_dialogueActive)
+            {
+                if (DialogueSystem.Instance != null && DialogueSystem.Instance.IsActive) return;
                 StartLinaDialogue();
             }
         }
@@ -313,11 +470,14 @@ namespace ProjectKai.Core
 
         private void AnimatePrompt()
         {
-            if (_interactionPrompt == null || !_interactionPrompt.activeSelf) return;
-
             _promptPulse += Time.deltaTime * 2f;
             float alpha = 0.6f + Mathf.Sin(_promptPulse) * 0.3f;
-            _promptText.color = new Color(1f, 0.9f, 0.5f, alpha);
+
+            if (_interactionPrompt != null && _interactionPrompt.activeSelf && _promptText != null)
+                _promptText.color = new Color(1f, 0.9f, 0.5f, alpha);
+
+            if (_blacksmithPrompt != null && _blacksmithPrompt.activeSelf && _blacksmithPromptText != null)
+                _blacksmithPromptText.color = new Color(1f, 0.7f, 0.3f, alpha);
         }
 
         // ═══════════════════════════════════════

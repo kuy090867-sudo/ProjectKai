@@ -208,7 +208,17 @@ namespace ProjectKai.Player
             InputBuffer.Update();
             ComboSystem.Update();
             UpdateFacing();
+            HandlePotionInput();
             Input.ConsumeAllPresses();
+        }
+
+        private void HandlePotionInput()
+        {
+            var keyboard = UnityEngine.InputSystem.Keyboard.current;
+            if (keyboard != null && keyboard.qKey.wasPressedThisFrame)
+            {
+                InventorySystem.Instance?.UsePotion();
+            }
         }
 
         private void FixedUpdate()

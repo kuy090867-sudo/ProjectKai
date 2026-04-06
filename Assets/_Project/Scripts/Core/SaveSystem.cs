@@ -35,6 +35,9 @@ namespace ProjectKai.Core
             PlayerPrefs.SetInt("SwordLevel", WeaponUpgrade.SwordLevel);
             PlayerPrefs.SetInt("GunLevel", WeaponUpgrade.GunLevel);
 
+            if (InventorySystem.Instance != null)
+                PlayerPrefs.SetInt("PotionCount", InventorySystem.Instance.PotionCount);
+
             PlayerPrefs.SetInt("HasSave", 1);
             PlayerPrefs.Save();
 
@@ -72,6 +75,9 @@ namespace ProjectKai.Core
             WeaponUpgrade.LoadLevels(
                 PlayerPrefs.GetInt("SwordLevel", 1),
                 PlayerPrefs.GetInt("GunLevel", 1));
+
+            if (InventorySystem.Instance != null)
+                InventorySystem.Instance.LoadData(PlayerPrefs.GetInt("PotionCount", 3));
 
             Debug.Log("[SaveSystem] 로드 완료");
         }

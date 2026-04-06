@@ -12,8 +12,8 @@ namespace ProjectKai.Core
         public static int SwordLevel { get; private set; } = 1;
         public static int GunLevel { get; private set; } = 1;
 
-        public static int SwordUpgradeCost => SwordLevel * 50;
-        public static int GunUpgradeCost => GunLevel * 50;
+        public static int SwordUpgradeCost => SwordLevel * 100;
+        public static int GunUpgradeCost => GunLevel * 100;
 
         public static float SwordDamageBonus => (SwordLevel - 1) * 3f;
         public static float GunDamageBonus => (GunLevel - 1) * 2f;

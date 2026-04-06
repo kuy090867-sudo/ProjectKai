@@ -18,6 +18,7 @@ namespace ProjectKai.UI
         private Image _expFill;
         private TextMeshProUGUI _levelText;
         private TextMeshProUGUI _weaponText;
+        private TextMeshProUGUI _potionText;
         private PlayerController _player;
 
         private void Awake()
@@ -66,6 +67,13 @@ namespace ProjectKai.UI
                 int exp = ProgressionSystem.Instance.Experience;
                 int needed = ProgressionSystem.Instance.Level * 100;
                 _expFill.fillAmount = needed > 0 ? (float)exp / needed : 0f;
+            }
+
+            if (_potionText != null)
+            {
+                var inv = Core.InventorySystem.Instance;
+                if (inv != null)
+                    _potionText.text = $"포션: {inv.PotionCount}/{inv.PotionMax}";
             }
         }
 
@@ -174,6 +182,20 @@ namespace ProjectKai.UI
             _weaponText.fontSize = 18;
             _weaponText.color = new Color(0.8f, 0.8f, 0.9f);
             _weaponText.alignment = TextAlignmentOptions.Right;
+
+            // 포션 카운트 (우하단, 무기 표시 위)
+            var potObj = new GameObject("Potion");
+            potObj.transform.SetParent(canvasObj.transform, false);
+            var potRect = potObj.AddComponent<RectTransform>();
+            potRect.anchorMin = new Vector2(0.85f, 0.08f);
+            potRect.anchorMax = new Vector2(0.98f, 0.13f);
+            potRect.offsetMin = Vector2.zero;
+            potRect.offsetMax = Vector2.zero;
+            _potionText = potObj.AddComponent<TextMeshProUGUI>();
+            _potionText.text = "포션: 3/5";
+            _potionText.fontSize = 16;
+            _potionText.color = new Color(0.4f, 0.9f, 0.5f);
+            _potionText.alignment = TextAlignmentOptions.Right;
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]

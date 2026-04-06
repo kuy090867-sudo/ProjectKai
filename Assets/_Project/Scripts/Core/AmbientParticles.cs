@@ -10,6 +10,18 @@ namespace ProjectKai.Core
     {
         private ParticleSystem _dustParticles;
         private ParticleSystem _magicParticles;
+        private static Material _particleMat;
+
+        private static Material GetParticleMaterial()
+        {
+            if (_particleMat == null)
+            {
+                var shader = Shader.Find("Sprites/Default");
+                if (shader != null)
+                    _particleMat = new Material(shader);
+            }
+            return _particleMat;
+        }
 
         private void Start()
         {
@@ -68,6 +80,8 @@ namespace ProjectKai.Core
 
             var renderer = obj.GetComponent<ParticleSystemRenderer>();
             renderer.sortingOrder = 5;
+            var mat = GetParticleMaterial();
+            if (mat != null) renderer.material = mat;
 
             // 카메라 따라가기
             obj.AddComponent<FollowCamera>();
@@ -112,6 +126,8 @@ namespace ProjectKai.Core
 
             var renderer = obj.GetComponent<ParticleSystemRenderer>();
             renderer.sortingOrder = 5;
+            var mat = GetParticleMaterial();
+            if (mat != null) renderer.material = mat;
 
             obj.AddComponent<FollowCamera>();
         }
@@ -141,6 +157,8 @@ namespace ProjectKai.Core
 
             var renderer = obj.GetComponent<ParticleSystemRenderer>();
             renderer.sortingOrder = -1;
+            var mat = GetParticleMaterial();
+            if (mat != null) renderer.material = mat;
 
             obj.AddComponent<FollowCamera>();
         }
