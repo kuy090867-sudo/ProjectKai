@@ -41,6 +41,7 @@ namespace ProjectKai.Combat
                 {
                     damageable.TakeDamage(_damage, _direction, _knockbackForce);
                     hitCount++;
+                    UI.ComboCounter.Instance?.AddHit();
                 }
             }
 
