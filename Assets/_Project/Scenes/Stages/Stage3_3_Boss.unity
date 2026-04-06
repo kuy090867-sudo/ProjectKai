@@ -651,6 +651,7 @@ GameObject:
   - component: {fileID: 1450590882}
   - component: {fileID: 1450590881}
   - component: {fileID: 1450590880}
+  - component: {fileID: 1450590884}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -714,6 +715,25 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1450590884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1450590879}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca5ab807c7099e34bbfbc9ca2c07c93a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectKai.Core.ProceduralLevel
+  _levelWidth: 40
+  _levelHeight: 12
+  _groundY: -3
+  _floorSpritePath: Sprites/Tiles/floor_1
+  _wallSpritePath: Sprites/Tiles/wall_mid
+  _groundColor: {r: 0.12, g: 0.08, b: 0.1, a: 1}
+  _wallColor: {r: 0.1, g: 0.06, b: 0.08, a: 1}
 --- !u!1 &1493046815
 GameObject:
   m_ObjectHideFlags: 0
