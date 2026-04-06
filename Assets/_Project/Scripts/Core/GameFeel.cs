@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 namespace ProjectKai.Core
@@ -98,6 +99,47 @@ namespace ProjectKai.Core
 
             Time.timeScale = 1f;
             Time.fixedDeltaTime = 0.02f;
+        }
+
+        /// <summary>
+        /// 킬 플래시. 적 사망 시 화면 순간 백색 플래시.
+        /// </summary>
+        public void KillFlash(float intensity = 0.3f)
+        {
+            StartCoroutine(KillFlashCoroutine(intensity));
+        }
+
+        private IEnumerator KillFlashCoroutine(float intensity)
+        {
+            // Canvas로 화면 전체 백색 오버레이
+            var flashObj = new GameObject("KillFlash");
+            var canvas = flashObj.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 99;
+
+            var imgObj = new GameObject("FlashImage");
+            imgObj.transform.SetParent(flashObj.transform, false);
+            var rect = imgObj.AddComponent<RectTransform>();
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+
+            var img = imgObj.AddComponent<UnityEngine.UI.Image>();
+            img.color = new Color(1f, 1f, 1f, intensity);
+            img.raycastTarget = false;
+
+            float elapsed = 0f;
+            float duration = 0.15f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float t = elapsed / duration;
+                img.color = new Color(1f, 1f, 1f, intensity * (1f - t));
+                yield return null;
+            }
+
+            Destroy(flashObj);
         }
 
         /// <summary>

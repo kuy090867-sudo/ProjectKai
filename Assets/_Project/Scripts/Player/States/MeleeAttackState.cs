@@ -43,8 +43,19 @@ namespace ProjectKai.Player.States
                 Player.SetVelocityX(0f);
             }
 
-            Player.SpriteAnim?.Play("hit", 12f, false);
-            Core.AudioManager.Instance?.PlaySFX("sword_swing", 0.5f);
+            // 콤보 단계별 애니메이션 + SFX
+            int step = _comboSystem.CurrentStep;
+            string animName = step switch
+            {
+                0 => "attack",
+                1 => "attack2",
+                _ => "attack3"
+            };
+            Player.SpriteAnim?.ForcePlay(animName);
+
+            // SFX 피치 변화로 콤보 느낌 (단계 올라갈수록 높은 피치)
+            float pitch = 1f + step * 0.15f;
+            Core.AudioManager.Instance?.PlaySFX("sword_swing", 0.5f + step * 0.1f);
 
             // 스탯+무기 강화 데미지 반영
             float bonusDmg = Core.WeaponUpgrade.SwordDamageBonus;

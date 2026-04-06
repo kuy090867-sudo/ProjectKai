@@ -53,6 +53,9 @@ namespace ProjectKai.Player.States
             {
                 Player.ResetGravity();
                 Core.AudioManager.Instance?.PlaySFX("land", 0.4f);
+                // 높은 곳에서 떨어졌을 때 착지감
+                if (StateTimer > 0.4f)
+                    Core.GameFeel.Instance?.CameraShake(0.04f, 0.08f);
 
                 if (Mathf.Abs(Player.Input.MoveInput.x) > 0.1f)
                     Player.StateMachine.ChangeState(Player.RunState);

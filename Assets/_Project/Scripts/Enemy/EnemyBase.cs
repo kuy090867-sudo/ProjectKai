@@ -244,12 +244,22 @@ namespace ProjectKai.Enemy
         {
             if (_currentState == EnemyState.Dead) return;
             SetState(EnemyState.Hit);
+
+            // SpriteAnimator 연동: hit 상태 재생
+            var anim = GetComponentInChildren<Core.SpriteAnimator>();
+            if (anim != null) anim.ForcePlay("hit");
         }
 
         private void OnDeath()
         {
             SetState(EnemyState.Dead);
-            Destroy(gameObject, 1f);
+            _rb.linearVelocity = Vector2.zero;
+
+            // SpriteAnimator 연동: death 상태 재생
+            var anim = GetComponentInChildren<Core.SpriteAnimator>();
+            if (anim != null) anim.ForcePlay("death");
+
+            // DamageReceiver.DeathSequenceCoroutine이 페이드+Destroy 처리
         }
 
         private void UpdateFacing()
