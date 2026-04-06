@@ -78,8 +78,22 @@ namespace ProjectKai.Enemy
             if (_player == null || !_dr.IsAlive) return;
 
             UpdateFacing();
-            _actionTimer += Time.deltaTime;
+            float dist = Vector2.Distance(transform.position, _player.position);
 
+            // 플레이어가 감지 범위 밖이면 추적
+            if (dist > _chaseRange)
+                return;
+
+            // 범위 내에서 거리가 멀면 다가감
+            if (!_isActing && dist > 3f)
+            {
+                float dir = Mathf.Sign(_player.position.x - transform.position.x);
+                _rb.MovePosition(new Vector2(
+                    transform.position.x + dir * _chaseSpeed * Time.deltaTime,
+                    _fixedY));
+            }
+
+            _actionTimer += Time.deltaTime;
             if (!_isActing && _actionTimer >= _actionCooldown)
             {
                 ChooseAction();
@@ -338,6 +352,8 @@ namespace ProjectKai.Enemy
             _isActing = true;
             _rb.MovePosition(new Vector2(transform.position.x, _fixedY));
             GameFeel.Instance?.KillSlowMotion(0.8f, 0.1f);
+            AudioManager.Instance?.PlaySFX("enemy_death", 1f);
+            if (_bossHPBar != null) _bossHPBar.Remove();
             Destroy(gameObject, 2f);
         }
 

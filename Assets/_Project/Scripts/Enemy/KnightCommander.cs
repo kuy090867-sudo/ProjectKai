@@ -179,6 +179,7 @@ namespace ProjectKai.Enemy
         private IEnumerator UnwinnableDefeatSequence()
         {
             _isActing = true;
+            if (_bossHPBar != null) _bossHPBar.Remove();
             GameFeel.Instance?.HitStop(0.2f);
             GameFeel.Instance?.CameraShake(0.25f, 0.5f);
 

@@ -177,6 +177,7 @@ namespace ProjectKai.Enemy
                     transform.position.x + _facingDirection * 2f,
                     _fixedY));
                 PerformAttackHit();
+                Core.AudioManager.Instance?.PlaySFX("sword_swing", 0.4f);
             }
 
             if (attackTime >= _attackDuration)

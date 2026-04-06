@@ -235,6 +235,11 @@ namespace ProjectKai.Player
 
             ApplyKnockback(knockbackDir, knockbackForce);
 
+            // 피격 리액션
+            Core.AudioManager.Instance?.PlaySFX("hit", 0.7f);
+            Core.GameFeel.Instance?.CameraShake(0.1f, 0.12f);
+            SpriteAnim?.ForcePlay("hit");
+
             if (!IsAlive)
             {
                 OnDeath();
