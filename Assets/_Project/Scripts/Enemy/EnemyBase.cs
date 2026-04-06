@@ -72,8 +72,14 @@ namespace ProjectKai.Enemy
         {
             _damageReceiver.OnDamaged += OnDamaged;
             _damageReceiver.OnDeath += OnDeath;
-            _fixedY = transform.position.y;
             _rb.bodyType = RigidbodyType2D.Kinematic;
+
+            // 바닥 Y를 ProceduralLevel에서 직접 계산 (Raycast 불필요)
+            float groundY = GetGroundY();
+            transform.position = new Vector3(transform.position.x, groundY, 0f);
+            _fixedY = groundY;
+            _patrolOrigin = transform.position;
+
             SetState(EnemyState.Patrol);
         }
 
@@ -172,9 +178,9 @@ namespace ProjectKai.Enemy
             // 실제 타격
             if (attackTime >= _attackDuration * 0.3f && attackTime < _attackDuration * 0.3f + Time.deltaTime)
             {
-                // 돌진 공격
+                // 돌진 공격 (0.5유닛 전진 — 순간이동 방지)
                 _rb.MovePosition(new Vector2(
-                    transform.position.x + _facingDirection * 2f,
+                    transform.position.x + _facingDirection * 0.5f,
                     _fixedY));
                 PerformAttackHit();
                 Core.AudioManager.Instance?.PlaySFX("sword_swing", 0.4f);
@@ -273,6 +279,26 @@ namespace ProjectKai.Enemy
         public void ScaleDamage(float multiplier)
         {
             _attackDamage *= multiplier;
+        }
+
+        /// <summary>
+        /// 바닥 표면 Y 계산.
+        /// 호출한 적의 현재 위치에서 아래로 Raycast하여 Ground 레이어 감지.
+        /// ProceduralLevel이 LevelData 맵 기반으로 배치하므로
+        /// 이미 올바른 위치에 스폰되지만, 안전장치로 유지.
+        /// </summary>
+        public static float GetGroundY()
+        {
+            // Ground 레이어로 Raycast
+            int groundLayer = LayerMask.GetMask("Ground");
+            if (groundLayer != 0)
+            {
+                // 맵 중앙 부근에서 아래로 Raycast
+                var hit = Physics2D.Raycast(new Vector2(5f, 50f), Vector2.down, 100f, groundLayer);
+                if (hit.collider != null)
+                    return hit.point.y + 0.4f; // 적 반높이 보정
+            }
+            return -1.6f; // 폴백 기본값
         }
 
         private void OnDrawGizmosSelected()

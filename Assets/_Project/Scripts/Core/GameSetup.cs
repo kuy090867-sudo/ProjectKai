@@ -11,15 +11,81 @@ namespace ProjectKai.Core
     {
         private void Awake()
         {
+            EnsureEventSystem();
+            DisableAmbientParticles();
             AutoAssignSprites();
             AutoAssignLayers();
             AutoAddEnemyRewards();
         }
 
+        private void DisableAmbientParticles()
+        {
+            // 사각형 파티클 비활성화 (프리팹 에셋으로 교체 전까지)
+            var particles = FindFirstObjectByType<AmbientParticles>();
+            if (particles != null)
+                particles.gameObject.SetActive(false);
+
+            // 기존 패럴랙스 배경 오브젝트 제거 (ProceduralLevel이 새로 생성)
+            var oldParallax = GameObject.Find("ParallaxBackground");
+            if (oldParallax != null)
+                Destroy(oldParallax);
+        }
+
+        /// <summary>
+        /// UI 버튼이 작동하려면 EventSystem이 필수.
+        /// 씬에 없으면 자동 생성.
+        /// </summary>
+        private static void EnsureEventSystem()
+        {
+            if (UnityEngine.EventSystems.EventSystem.current == null)
+            {
+                var esObj = new GameObject("EventSystem");
+                esObj.AddComponent<UnityEngine.EventSystems.EventSystem>();
+                esObj.AddComponent<UnityEngine.InputSystem.UI.InputSystemUIInputModule>();
+                DontDestroyOnLoad(esObj);
+            }
+        }
+
         private void Start()
         {
+            FixEnemyPositions();
+            FixEnemySpriteRenderers();
             CreateHealthBars();
             DifficultyScaler.ScaleEnemies();
+        }
+
+        /// <summary>
+        /// 적/플레이어 위치 보정.
+        /// ProceduralLevel이 LevelData 맵 기반으로 배치하므로
+        /// Stage 씬에서는 별도 보정이 불필요. Hub 등 비-Stage 씬에서만 동작.
+        /// </summary>
+        private void FixEnemyPositions()
+        {
+            string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+            if (sceneName.StartsWith("Stage"))
+            {
+                // ProceduralLevel이 맵 데이터 기반으로 직접 배치하므로 스킵
+                Debug.Log("[GameSetup] Stage 씬: ProceduralLevel이 배치 담당, FixEnemyPositions 스킵");
+                return;
+            }
+        }
+
+        /// <summary>
+        /// 적 Sprite에 SpriteRenderer가 없으면 추가.
+        /// </summary>
+        private void FixEnemySpriteRenderers()
+        {
+            var enemies = GameObject.FindGameObjectsWithTag("Enemy");
+            foreach (var e in enemies)
+            {
+                var sr = e.GetComponentInChildren<SpriteRenderer>();
+                if (sr == null)
+                {
+                    var spriteChild = e.transform.Find("Sprite");
+                    if (spriteChild != null)
+                        spriteChild.gameObject.AddComponent<SpriteRenderer>();
+                }
+            }
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
