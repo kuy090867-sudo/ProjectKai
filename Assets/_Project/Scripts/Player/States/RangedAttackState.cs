@@ -67,10 +67,14 @@ namespace ProjectKai.Player.States
                 var proj = projectile.GetComponent<Projectile>();
                 if (proj != null)
                 {
+                    float bonusDmg = Core.WeaponUpgrade.GunDamageBonus;
+                    if (Core.ProgressionSystem.Instance != null)
+                        bonusDmg += Core.ProgressionSystem.Instance.BonusDamage * 0.5f;
+
                     proj.Initialize(
                         new Vector2(Player.FacingDirection, 0f),
                         _weaponData.projectileSpeed,
-                        _weaponData.baseDamage,
+                        _weaponData.baseDamage + bonusDmg,
                         _weaponData.knockbackForce
                     );
                 }

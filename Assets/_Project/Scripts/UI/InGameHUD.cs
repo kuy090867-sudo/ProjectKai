@@ -15,6 +15,7 @@ namespace ProjectKai.UI
 
         private Image _hpFill;
         private TextMeshProUGUI _levelText;
+        private TextMeshProUGUI _weaponText;
         private PlayerController _player;
 
         private void Awake()
@@ -43,9 +44,10 @@ namespace ProjectKai.UI
             }
 
             if (_levelText != null && ProgressionSystem.Instance != null)
-            {
                 _levelText.text = $"Lv.{ProgressionSystem.Instance.Level}";
-            }
+
+            if (_weaponText != null && _player != null)
+                _weaponText.text = _player.IsMelee ? "⚔ 검" : "🔫 총";
         }
 
         private void CreateHUD()
@@ -94,6 +96,20 @@ namespace ProjectKai.UI
             _levelText.text = "Lv.1";
             _levelText.fontSize = 18;
             _levelText.color = new Color(0.9f, 0.8f, 0.5f);
+
+            // 무기 표시 (우하단)
+            var wpnObj = new GameObject("Weapon");
+            wpnObj.transform.SetParent(canvasObj.transform, false);
+            var wpnRect = wpnObj.AddComponent<RectTransform>();
+            wpnRect.anchorMin = new Vector2(0.88f, 0.03f);
+            wpnRect.anchorMax = new Vector2(0.98f, 0.08f);
+            wpnRect.offsetMin = Vector2.zero;
+            wpnRect.offsetMax = Vector2.zero;
+            _weaponText = wpnObj.AddComponent<TextMeshProUGUI>();
+            _weaponText.text = "검";
+            _weaponText.fontSize = 18;
+            _weaponText.color = new Color(0.8f, 0.8f, 0.9f);
+            _weaponText.alignment = TextAlignmentOptions.Right;
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]

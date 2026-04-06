@@ -46,8 +46,13 @@ namespace ProjectKai.Player.States
             Player.SpriteAnim?.Play("hit", 12f, false);
             Core.AudioManager.Instance?.PlaySFX("sword_swing", 0.5f);
 
+            // 스탯+무기 강화 데미지 반영
+            float bonusDmg = Core.WeaponUpgrade.SwordDamageBonus;
+            if (Core.ProgressionSystem.Instance != null)
+                bonusDmg += Core.ProgressionSystem.Instance.BonusDamage;
+
             _damageDealer.Activate(
-                _currentStep.damage,
+                _currentStep.damage + bonusDmg,
                 _currentStep.knockbackForce,
                 new Vector2(Player.FacingDirection, 0f),
                 _enemyLayer
