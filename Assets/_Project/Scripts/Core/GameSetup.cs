@@ -18,6 +18,7 @@ namespace ProjectKai.Core
         private void Start()
         {
             CreateHealthBars();
+            DifficultyScaler.ScaleEnemies();
         }
 
         private void AutoAddEnemyRewards()
