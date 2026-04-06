@@ -165,11 +165,12 @@ namespace ProjectKai.Core
     {
         private void LateUpdate()
         {
-            if (Camera.main != null)
+            var cam = UnityEngine.Camera.main;
+            if (cam != null)
             {
                 transform.position = new Vector3(
-                    Camera.main.transform.position.x,
-                    Camera.main.transform.position.y,
+                    cam.transform.position.x,
+                    cam.transform.position.y,
                     0f);
             }
         }

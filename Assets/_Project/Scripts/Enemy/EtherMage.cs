@@ -21,6 +21,11 @@ namespace ProjectKai.Enemy
         [SerializeField] private float _projectileSpeed = 10f;
         [SerializeField] private int _burstCount = 3;
 
+        [Header("Glow")]
+        [SerializeField] private float _glowSpeed = 2f;
+        [SerializeField] private Color _glowColorA = new Color(0.3f, 0.6f, 1f);   // 파란색
+        [SerializeField] private Color _glowColorB = new Color(0.85f, 0.9f, 1f);   // 백색(약간 파랑)
+
         private Rigidbody2D _rb;
         private DamageReceiver _dr;
         private SpriteRenderer _sr;
@@ -28,6 +33,7 @@ namespace ProjectKai.Enemy
         private float _fixedY;
         private float _actionTimer;
         private bool _isActing;
+        private bool _isGlowing = true;
         private int _facingDir = -1;
         private Vector2 _spawnPosition;
 
@@ -52,7 +58,16 @@ namespace ProjectKai.Enemy
 
         private void Update()
         {
-            if (_player == null || !_dr.IsAlive || _isActing) return;
+            if (_player == null || !_dr.IsAlive) return;
+
+            // 에테르 발광: 텔레그래프(_isActing) 중이 아닐 때만 사인파 색상 펄스
+            if (_isGlowing && !_isActing && _sr != null)
+            {
+                float t = (Mathf.Sin(Time.time * _glowSpeed) + 1f) * 0.5f;   // 0~1 반복
+                _sr.color = Color.Lerp(_glowColorA, _glowColorB, t);
+            }
+
+            if (_isActing) return;
 
             UpdateFacing();
             float dist = Vector2.Distance(transform.position, _player.position);
@@ -70,6 +85,7 @@ namespace ProjectKai.Enemy
         private System.Collections.IEnumerator AttackSequence()
         {
             _isActing = true;
+            _isGlowing = false;   // 텔레그래프 중 발광 비활성화
 
             // 텔레그래프: 보라색 빛
             if (_sr != null) _sr.color = new Color(0.6f, 0.2f, 1f);
@@ -89,6 +105,7 @@ namespace ProjectKai.Enemy
             // 순간이동
             yield return StartCoroutine(TeleportAway());
 
+            _isGlowing = true;    // 발광 재활성화
             _isActing = false;
         }
 

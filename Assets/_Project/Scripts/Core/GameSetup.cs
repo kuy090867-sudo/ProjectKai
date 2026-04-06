@@ -90,16 +90,31 @@ namespace ProjectKai.Core
         {
             // Player 스프라이트는 SpriteAnimator가 관리 — 여기서 건드리지 않음
 
-            // Enemy 스프라이트
+            // Enemy 스프라이트 — 타입별 자동 할당 + SpriteAnimator 설정
             var enemies = GameObject.FindGameObjectsWithTag("Enemy");
             foreach (var enemy in enemies)
             {
                 var sr = enemy.GetComponentInChildren<SpriteRenderer>();
                 if (sr != null && sr.sprite == null)
                 {
-                    sr.sprite = LoadPixelSprite("Sprites/Enemy/goblin_idle_0");
+                    string spritePath = GetEnemySpritePath(enemy);
+                    sr.sprite = LoadPixelSprite(spritePath);
                     sr.color = Color.white;
                     if (sr.sprite == null) sr.sprite = CreatePlaceholder();
+                }
+
+                // SpriteAnimator 자동 설정
+                var anim = enemy.GetComponentInChildren<SpriteAnimator>();
+                if (anim == null)
+                {
+                    var spriteChild = enemy.GetComponentInChildren<SpriteRenderer>();
+                    if (spriteChild != null)
+                        anim = spriteChild.gameObject.AddComponent<SpriteAnimator>();
+                }
+                if (anim != null)
+                {
+                    string prefix = GetEnemySpritePrefix(enemy);
+                    anim.ConfigureEnemy("Sprites/Enemy", prefix);
                 }
             }
 
@@ -113,6 +128,22 @@ namespace ProjectKai.Core
                         sr.sprite = CreatePlaceholder();
                 }
             }
+        }
+
+        private static string GetEnemySpritePrefix(GameObject enemy)
+        {
+            if (enemy.GetComponent<Enemy.BossGoblin>() != null) return "big_demon";
+            if (enemy.GetComponent<Enemy.KnightCommander>() != null) return "knight_f";
+            if (enemy.GetComponent<Enemy.OrcWarrior>() != null) return "orc_warrior";
+            if (enemy.GetComponent<Enemy.SkeletonArcher>() != null) return "necromancer";
+            if (enemy.GetComponent<Enemy.EtherMage>() != null) return "wizzard_m";
+            return "goblin";
+        }
+
+        private static string GetEnemySpritePath(GameObject enemy)
+        {
+            string prefix = GetEnemySpritePrefix(enemy);
+            return $"Sprites/Enemy/{prefix}_idle_anim_f0";
         }
 
         /// <summary>

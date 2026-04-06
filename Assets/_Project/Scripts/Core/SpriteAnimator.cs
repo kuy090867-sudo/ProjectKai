@@ -45,10 +45,14 @@ namespace ProjectKai.Core
         {
             if (_isEnemy)
             {
-                string p = _prefix; // e.g. "goblin"
-                RegisterAnim("idle", LoadFrames($"{p}_idle_anim_f", 4), 5f);
-                RegisterAnim("run", LoadFrames($"{p}_run_anim_f", 4), 10f);
-                // 공격: idle 0번 프레임 + 스케일/회전 효과
+                string p = _prefix;
+                var idleFrames = LoadFrames($"{p}_idle_anim_f", 4);
+                var runFrames = LoadFrames($"{p}_run_anim_f", 4);
+                // run 프레임이 없으면 idle로 대체
+                if (runFrames[0] == null) runFrames = idleFrames;
+
+                RegisterAnim("idle", idleFrames, 5f);
+                RegisterAnim("run", runFrames, 10f);
                 RegisterAnim("attack", LoadFrames($"{p}_idle_anim_f", 1), 8f, false, 1.1f, 1f, -10f);
                 RegisterAnim("hit", LoadFrames($"{p}_idle_anim_f", 1), 8f, false, 0.9f, 1.1f, 5f);
                 RegisterAnim("death", LoadFrames($"{p}_idle_anim_f", 1), 4f, false, 1f, 0.8f, 15f);
@@ -162,6 +166,23 @@ namespace ProjectKai.Core
         {
             transform.localScale = _baseScale;
             transform.localRotation = Quaternion.identity;
+            Play("idle");
+        }
+
+        /// <summary>
+        /// 런타임에 적 타입별 스프라이트 폴더/접두사 설정 후 애니메이션 재로드
+        /// </summary>
+        public void ConfigureEnemy(string folder, string prefix)
+        {
+            _spriteFolder = folder;
+            _prefix = prefix;
+            _isEnemy = true;
+            if (_sr == null) _sr = GetComponent<SpriteRenderer>() ?? GetComponentInChildren<SpriteRenderer>();
+            if (_states == null) _states = new System.Collections.Generic.Dictionary<string, AnimState>();
+            _baseScale = transform.localScale;
+            _states.Clear();
+            LoadAllAnimations();
+            _currentName = "";
             Play("idle");
         }
     }
