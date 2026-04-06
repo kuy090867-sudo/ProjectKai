@@ -121,11 +121,29 @@ namespace ProjectKai.UI
                 }
             }
 
+            // 무기 강화
+            AddText(canvasObj.transform, "— 무기 강화 —", 18,
+                new Color(0.7f, 0.65f, 0.5f), new Vector2(0.55f, 0.3f), new Vector2(0.95f, 0.37f));
+
+            AddText(canvasObj.transform,
+                $"검 Lv.{WeaponUpgrade.SwordLevel} (+{WeaponUpgrade.SwordDamageBonus:F0} DMG)  |  총 Lv.{WeaponUpgrade.GunLevel} (+{WeaponUpgrade.GunDamageBonus:F0} DMG)",
+                14, new Color(0.8f, 0.8f, 0.8f), new Vector2(0.55f, 0.24f), new Vector2(0.95f, 0.3f));
+
+            CreateUpgradeBtn(canvasObj.transform, $"검 강화 ({WeaponUpgrade.SwordUpgradeCost}G)",
+                new Vector2(0.55f, 0.17f), new Vector2(0.74f, 0.24f), () =>
+            {
+                if (WeaponUpgrade.UpgradeSword()) RefreshUI(canvasObj);
+            });
+            CreateUpgradeBtn(canvasObj.transform, $"총 강화 ({WeaponUpgrade.GunUpgradeCost}G)",
+                new Vector2(0.76f, 0.17f), new Vector2(0.95f, 0.24f), () =>
+            {
+                if (WeaponUpgrade.UpgradeGun()) RefreshUI(canvasObj);
+            });
+
             // 하단 버튼
             CreateStageBtn(canvasObj.transform, "메인 메뉴", "MainMenu",
                 new Vector2(0.7f, 0.05f), new Vector2(0.95f, 0.15f), true);
 
-            // 테스트 스테이지
             CreateStageBtn(canvasObj.transform, "테스트", "TestStage",
                 new Vector2(0.5f, 0.05f), new Vector2(0.68f, 0.15f), true);
         }
@@ -182,6 +200,35 @@ namespace ProjectKai.UI
             var tmp = t.AddComponent<TextMeshProUGUI>();
             tmp.text = label; tmp.fontSize = 22;
             tmp.color = enabled ? new Color(0.9f, 0.85f, 0.7f) : new Color(0.4f, 0.4f, 0.4f);
+            tmp.alignment = TextAlignmentOptions.Center;
+        }
+
+        private void RefreshUI(GameObject canvasObj)
+        {
+            Destroy(canvasObj);
+            CreateUI();
+        }
+
+        private void CreateUpgradeBtn(Transform parent, string label, Vector2 aMin, Vector2 aMax, UnityEngine.Events.UnityAction action)
+        {
+            var obj = new GameObject(label);
+            obj.transform.SetParent(parent, false);
+            var rect = obj.AddComponent<RectTransform>();
+            rect.anchorMin = aMin; rect.anchorMax = aMax;
+            rect.offsetMin = Vector2.zero; rect.offsetMax = Vector2.zero;
+            obj.AddComponent<Image>().color = new Color(0.25f, 0.2f, 0.15f, 0.9f);
+            var btn = obj.AddComponent<Button>();
+            btn.onClick.AddListener(action);
+            var colors = btn.colors;
+            colors.highlightedColor = new Color(0.4f, 0.35f, 0.25f);
+            btn.colors = colors;
+            var t = new GameObject("T");
+            t.transform.SetParent(obj.transform, false);
+            var tr = t.AddComponent<RectTransform>();
+            tr.anchorMin = Vector2.zero; tr.anchorMax = Vector2.one;
+            tr.offsetMin = Vector2.zero; tr.offsetMax = Vector2.zero;
+            var tmp = t.AddComponent<TextMeshProUGUI>();
+            tmp.text = label; tmp.fontSize = 14; tmp.color = new Color(1f, 0.9f, 0.6f);
             tmp.alignment = TextAlignmentOptions.Center;
         }
 

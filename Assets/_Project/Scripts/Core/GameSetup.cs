@@ -28,6 +28,8 @@ namespace ProjectKai.Core
             {
                 if (e.GetComponent<EnemyReward>() == null)
                     e.AddComponent<EnemyReward>();
+                if (e.GetComponent<ItemDrop>() == null)
+                    e.AddComponent<ItemDrop>();
             }
         }
 
