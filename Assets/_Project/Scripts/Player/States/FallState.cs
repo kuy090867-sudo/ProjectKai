@@ -19,6 +19,7 @@ namespace ProjectKai.Player.States
             base.Execute();
 
             if (TryDash()) return;
+            if (TryAttack()) return;
 
             // 코요테 타임 점프
             if (Player.InputBuffer.HasInput(BufferedInput.Jump) && Player.GroundCheck.IsGrounded)

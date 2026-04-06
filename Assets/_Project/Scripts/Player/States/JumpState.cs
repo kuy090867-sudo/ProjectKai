@@ -21,6 +21,7 @@ namespace ProjectKai.Player.States
             base.Execute();
 
             if (TryDash()) return;
+            if (TryAttack()) return;
 
             // 점프 버튼을 놓으면 점프 높이 제한 (숏 점프)
             if (!Player.Input.JumpHeld && Player.Rb.linearVelocity.y > 0f)

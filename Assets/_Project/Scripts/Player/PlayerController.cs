@@ -88,7 +88,7 @@ namespace ProjectKai.Player
         public float CurrentHealth { get; private set; }
         public bool IsAlive => CurrentHealth > 0f;
         public bool IsMelee { get; private set; } = true;
-        private bool _isInvincible;
+        public bool IsInvincible { get; set; }
 
         private float _defaultGravityScale;
 
@@ -236,7 +236,7 @@ namespace ProjectKai.Player
 
         public void TakeDamage(float damage, Vector2 knockbackDir, float knockbackForce)
         {
-            if (!IsAlive || _isInvincible) return;
+            if (!IsAlive || IsInvincible) return;
 
             CurrentHealth -= damage;
             CurrentHealth = Mathf.Max(CurrentHealth, 0f);
@@ -262,7 +262,7 @@ namespace ProjectKai.Player
 
         private System.Collections.IEnumerator InvincibilityCoroutine()
         {
-            _isInvincible = true;
+            IsInvincible = true;
             float timer = 0f;
             float duration = 0.5f;
 
@@ -276,7 +276,7 @@ namespace ProjectKai.Player
 
             if (SpriteRenderer != null)
                 SpriteRenderer.enabled = true;
-            _isInvincible = false;
+            IsInvincible = false;
         }
 
         public void ApplyKnockback(Vector2 direction, float force)

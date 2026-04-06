@@ -15,7 +15,8 @@ namespace ProjectKai.Player.States
             Player.SpriteAnim?.Play("dash");
             Core.AudioManager.Instance?.PlaySFX("dash", 0.4f);
 
-            // 대시 트레일 활성화
+            // 대시 무적 + 트레일
+            Player.IsInvincible = true;
             var trail = Player.GetComponentInChildren<TrailRenderer>();
             if (trail != null) trail.emitting = true;
         }
@@ -35,8 +36,8 @@ namespace ProjectKai.Player.States
         {
             base.Exit();
             Player.ResetGravity();
+            Player.IsInvincible = false;
 
-            // 대시 트레일 비활성화
             var trail = Player.GetComponentInChildren<TrailRenderer>();
             if (trail != null) trail.emitting = false;
         }
