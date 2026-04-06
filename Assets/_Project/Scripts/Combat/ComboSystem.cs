@@ -29,6 +29,11 @@ namespace ProjectKai.Combat
             if (!_canAdvance && _currentStep > 0)
                 return null;
 
+            if (_currentStep >= _comboData.steps.Length)
+            {
+                _currentStep = 0;
+            }
+
             var step = _comboData.steps[_currentStep];
             _comboTimer = _comboData.comboResetTime;
             _canAdvance = false;

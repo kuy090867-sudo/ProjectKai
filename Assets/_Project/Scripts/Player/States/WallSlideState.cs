@@ -18,7 +18,7 @@ namespace ProjectKai.Player.States
         {
             base.Enter();
             _wallCheck = Player.GetComponentInChildren<WallCheck>();
-            Player.SetGravityScale(Player.Rb.gravityScale * 0.3f); // 느린 낙하
+            Player.SetGravityScale(Player.DefaultGravityScale * 0.3f); // 느린 낙하
             Player.SpriteAnim?.Play("fall");
         }
 

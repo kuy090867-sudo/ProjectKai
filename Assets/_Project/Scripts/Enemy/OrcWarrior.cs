@@ -51,7 +51,7 @@ namespace ProjectKai.Enemy
             _fixedY = transform.position.y;
             _patrolOrigin = transform.position;
             _dr.OnDamaged += (d, dir) => { _state = State.Hit; _stateTimer = 0f; };
-            _dr.OnDeath += () => { _state = State.Dead; Destroy(gameObject, 1.5f); };
+            _dr.OnDeath += () => { _state = State.Dead; StopAllCoroutines(); Destroy(gameObject, 1.5f); };
 
             var p = GameObject.FindWithTag("Player");
             if (p != null) _player = p.transform;

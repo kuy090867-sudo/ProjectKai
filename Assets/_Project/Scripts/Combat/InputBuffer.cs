@@ -33,7 +33,7 @@ namespace ProjectKai.Combat
         {
             if (_bufferTimer > 0f)
             {
-                _bufferTimer -= Time.deltaTime;
+                _bufferTimer -= Time.unscaledDeltaTime;
                 if (_bufferTimer <= 0f)
                 {
                     _bufferedInput = BufferedInput.None;

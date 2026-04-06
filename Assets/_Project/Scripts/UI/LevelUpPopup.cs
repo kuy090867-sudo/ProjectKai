@@ -23,6 +23,12 @@ namespace ProjectKai.UI
                 Core.ProgressionSystem.Instance.OnLevelUp += Show;
         }
 
+        private void OnDestroy()
+        {
+            if (Core.ProgressionSystem.Instance != null)
+                Core.ProgressionSystem.Instance.OnLevelUp -= Show;
+        }
+
         public void Show(int level)
         {
             StartCoroutine(ShowPopup(level));

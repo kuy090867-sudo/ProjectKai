@@ -10,7 +10,7 @@ namespace ProjectKai.Player.States
         public override void Enter()
         {
             base.Enter();
-            Player.SetGravityScale(Player.Rb.gravityScale * Player.FallGravityMultiplier);
+            Player.SetGravityScale(Player.DefaultGravityScale * Player.FallGravityMultiplier);
             Player.SpriteAnim?.Play("fall");
         }
 

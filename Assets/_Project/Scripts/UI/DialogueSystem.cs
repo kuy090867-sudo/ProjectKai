@@ -26,6 +26,7 @@ namespace ProjectKai.UI
         [SerializeField] private float _typeSpeed = 0.03f;
 
         private DialogueDataSO _currentDialogue;
+        private bool _isRuntimeDialogue;
         private int _currentLine;
         private bool _isTyping;
         private bool _isActive;
@@ -68,8 +69,13 @@ namespace ProjectKai.UI
         {
             if (lines == null || lines.Length == 0) return;
 
+            // 이전 런타임 SO 정리
+            if (_isRuntimeDialogue && _currentDialogue != null)
+                Destroy(_currentDialogue);
+
             var data = ScriptableObject.CreateInstance<DialogueDataSO>();
             data.lines = lines;
+            _isRuntimeDialogue = true;
             StartDialogue(data);
         }
 
@@ -155,6 +161,13 @@ namespace ProjectKai.UI
 
             if (_dialoguePanel != null)
                 _dialoguePanel.SetActive(false);
+
+            // 런타임 생성 SO 정리
+            if (_isRuntimeDialogue && _currentDialogue != null)
+            {
+                Destroy(_currentDialogue);
+                _isRuntimeDialogue = false;
+            }
 
             OnDialogueComplete?.Invoke();
         }

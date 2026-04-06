@@ -33,7 +33,7 @@ namespace ProjectKai.Enemy
         private float _lastAttackTime = -999f;
         private int _facingDir = -1;
 
-        private enum State { Patrol, Retreat, Attack, Hit }
+        private enum State { Patrol, Retreat, Attack, Hit, Dead }
         private State _state = State.Patrol;
         private Vector2 _patrolOrigin;
         private float _stateTimer;
@@ -51,7 +51,7 @@ namespace ProjectKai.Enemy
             _fixedY = transform.position.y;
             _patrolOrigin = transform.position;
             _dr.OnDamaged += (d, dir) => { _state = State.Hit; _stateTimer = 0f; };
-            _dr.OnDeath += () => Destroy(gameObject, 1f);
+            _dr.OnDeath += () => { _state = State.Dead; StopAllCoroutines(); Destroy(gameObject, 1f); };
 
             var p = GameObject.FindWithTag("Player");
             if (p != null) _player = p.transform;

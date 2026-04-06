@@ -26,15 +26,17 @@ namespace ProjectKai.UI
             _currentHealth = current;
             _maxHealth = max;
             if (_fillImage != null)
-                _fillImage.fillAmount = current / max;
+                _fillImage.fillAmount = max > 0f ? Mathf.Clamp01(current / max) : 0f;
         }
 
         private void LateUpdate()
         {
-            if (_target != null)
+            if (_target == null)
             {
-                transform.position = _target.position + _offset;
+                Destroy(gameObject);
+                return;
             }
+            transform.position = _target.position + _offset;
         }
 
         /// <summary>
