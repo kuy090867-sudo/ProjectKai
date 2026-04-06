@@ -6,8 +6,11 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/_Project/Scenes/Stages/TestStage.unity
-    guid: 72c90cbba17bd9c42b82e3ff73b6fd63
+    path: Assets/_Project/Scenes/MainMenu.unity
+    guid: 1232f364cabb8c643bfc9552aad5867f
+  - enabled: 1
+    path: Assets/_Project/Scenes/Hub/Hub.unity
+    guid: bd29532d0ce2faf409d9175b5356305a
   - enabled: 1
     path: Assets/_Project/Scenes/Stages/Stage1_1.unity
     guid: c3e63078bc457ec45997a4596a820fd1
@@ -17,9 +20,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Project/Scenes/Stages/Stage1_3_Boss.unity
     guid: 50276afe3df16bc4fb4db12008a15bd1
-  - enabled: 1
-    path: Assets/_Project/Scenes/MainMenu.unity
-    guid: 1232f364cabb8c643bfc9552aad5867f
   - enabled: 1
     path: Assets/_Project/Scenes/Stages/Stage2_1.unity
     guid: dc50800177b981c4587d64427f9a0574
@@ -39,8 +39,8 @@ EditorBuildSettings:
     path: Assets/_Project/Scenes/Stages/Stage3_3_Boss.unity
     guid: 1251ecefb1d927d449c8af4295cdee03
   - enabled: 1
-    path: Assets/_Project/Scenes/Hub/Hub.unity
-    guid: bd29532d0ce2faf409d9175b5356305a
+    path: Assets/_Project/Scenes/Stages/TestStage.unity
+    guid: 72c90cbba17bd9c42b82e3ff73b6fd63
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

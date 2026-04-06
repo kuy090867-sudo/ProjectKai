@@ -12,6 +12,7 @@ namespace ProjectKai.Core
         private void Awake()
         {
             AutoAssignSprites();
+            AutoAssignLayers();
             AutoAddEnemyRewards();
         }
 
@@ -19,6 +20,20 @@ namespace ProjectKai.Core
         {
             CreateHealthBars();
             DifficultyScaler.ScaleEnemies();
+        }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        private static void AutoInitialize()
+        {
+            string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+            if (sceneName.StartsWith("Stage") || sceneName == "Hub")
+            {
+                if (FindFirstObjectByType<GameSetup>() == null)
+                {
+                    var obj = new GameObject("GameSetup");
+                    obj.AddComponent<GameSetup>();
+                }
+            }
         }
 
         private void AutoAddEnemyRewards()
@@ -72,9 +87,6 @@ namespace ProjectKai.Core
 
         private void AutoAssignSprites()
         {
-            // Player 스프라이트는 SpriteAnimator가 관리 — 여기서 건드리지 않음
-
-            // Enemy 스프라이트
             var enemies = GameObject.FindGameObjectsWithTag("Enemy");
             foreach (var enemy in enemies)
             {
@@ -87,7 +99,6 @@ namespace ProjectKai.Core
                 }
             }
 
-            // Environment — 플레이스홀더 유지 (타일은 나중에 Tilemap으로)
             var envParent = GameObject.Find("Environment");
             if (envParent != null)
             {
@@ -99,9 +110,6 @@ namespace ProjectKai.Core
             }
         }
 
-        /// <summary>
-        /// 16x16 픽셀아트를 PPU=16으로 로드하여 1유닛=1타일 크기로 표시
-        /// </summary>
         private static Sprite LoadPixelSprite(string path)
         {
             var tex = Resources.Load<Texture2D>(path);
@@ -110,7 +118,7 @@ namespace ProjectKai.Core
             return Sprite.Create(tex,
                 new Rect(0, 0, tex.width, tex.height),
                 new Vector2(0.5f, 0.5f),
-                16f); // PPU=16 → 16px 스프라이트가 1 유닛 크기
+                16f);
         }
 
         private static Sprite CreatePlaceholder()

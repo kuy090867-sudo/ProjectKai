@@ -51,6 +51,7 @@ namespace ProjectKai.Enemy
             _fixedY = transform.position.y;
             _dr.OnDamaged += OnDamaged;
             _dr.OnHealthChanged += OnHealthChanged;
+            _dr.OnDeath += OnDeath;
 
             var p = GameObject.FindWithTag("Player");
             if (p != null) _player = p.transform;
@@ -237,6 +238,18 @@ namespace ProjectKai.Enemy
         }
 
         private void OnDamaged(float damage, Vector2 dir) { }
+
+        private void OnDeath()
+        {
+            if (_isUnwinnable) return;
+            _defeated = true;
+            _isActing = true;
+            if (_bossHPBar != null) _bossHPBar.Remove();
+            GameFeel.Instance?.KillSlowMotion(1f, 0.1f);
+            GameFeel.Instance?.CameraShake(0.3f, 0.5f);
+            AudioManager.Instance?.PlaySFX("enemy_death", 1f);
+            Debug.Log("[KnightCommander] 기사단장 처치!");
+        }
 
         private void UpdateFacing()
         {
