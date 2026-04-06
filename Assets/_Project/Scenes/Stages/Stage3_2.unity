@@ -1253,6 +1253,7 @@ GameObject:
   - component: {fileID: 976200662}
   - component: {fileID: 976200661}
   - component: {fileID: 976200664}
+  - component: {fileID: 976200665}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -1323,6 +1324,18 @@ MonoBehaviour:
   _wallSpritePath: Sprites/Tiles/wall_mid
   _groundColor: {r: 0.22, g: 0.18, b: 0.15, a: 1}
   _wallColor: {r: 0.18, g: 0.15, b: 0.12, a: 1}
+--- !u!114 &976200665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 976200660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6edec9b74f1e43745bf965fcdd48c721, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectKai.Core.Stage3_2_Init
 --- !u!1 &1185035997
 GameObject:
   m_ObjectHideFlags: 0

@@ -54,7 +54,7 @@ namespace ProjectKai.Core
                 yield return null;
 
             yield return new WaitForSeconds(2f);
-            UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
+            UI.CreditsScreen.Show();
         }
     }
 }
