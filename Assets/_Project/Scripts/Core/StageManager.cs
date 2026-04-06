@@ -99,11 +99,9 @@ namespace ProjectKai.Core
                     yield return null;
             }
 
-            // 다음 스테이지 로드
-            if (!string.IsNullOrEmpty(_nextSceneName))
-            {
-                UnityEngine.SceneManagement.SceneManager.LoadScene(_nextSceneName);
-            }
+            // 결과 화면
+            UI.StageResult.Instance?.Show(_stageName, _stageTime, _killedEnemies,
+                string.IsNullOrEmpty(_nextSceneName) ? "Hub" : _nextSceneName);
         }
 
         private IEnumerator ShowBossRoomText()
