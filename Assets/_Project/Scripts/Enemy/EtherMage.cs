@@ -85,7 +85,7 @@ namespace ProjectKai.Enemy
             yield return new WaitForSeconds(0.3f);
 
             // 순간이동
-            yield return TeleportAway();
+            yield return StartCoroutine(TeleportAway());
 
             _isActing = false;
         }

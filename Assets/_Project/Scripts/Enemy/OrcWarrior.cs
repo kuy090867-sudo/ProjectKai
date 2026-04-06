@@ -105,6 +105,7 @@ namespace ProjectKai.Enemy
                             transform.position.x + _facingDir * 4f * Time.deltaTime,
                             _fixedY));
                         PerformHit(_attackDamage * 0.5f, _shieldKnockback);
+                        AudioManager.Instance?.PlaySFX("hit", 0.7f);
                         if (_sr != null) _sr.color = Color.white;
                     }
                     else
