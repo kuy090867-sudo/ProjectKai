@@ -23,6 +23,14 @@ namespace ProjectKai.StateMachine
             CurrentState.Enter();
         }
 
+        public void ForceChangeState(IState newState)
+        {
+            PreviousState = CurrentState;
+            CurrentState.Exit();
+            CurrentState = newState;
+            CurrentState.Enter();
+        }
+
         public void Update()
         {
             CurrentState?.Execute();

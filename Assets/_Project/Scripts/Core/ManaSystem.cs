@@ -46,21 +46,29 @@ namespace ProjectKai.Core
             }
         }
 
+        public float ActualMaxMana
+        {
+            get
+            {
+                float intBonus = ProgressionSystem.Instance != null ? ProgressionSystem.Instance.INT * 2f : 0f;
+                return _maxMana + intBonus;
+            }
+        }
+
         public bool UseMana(float amount)
         {
             if (CurrentMana < amount) return false;
 
             CurrentMana -= amount;
             _lastUseTime = Time.time;
-            OnManaChanged?.Invoke(CurrentMana, _maxMana);
+            OnManaChanged?.Invoke(CurrentMana, ActualMaxMana);
             return true;
         }
 
         public void RestoreMana(float amount)
         {
-            float intBonus = ProgressionSystem.Instance != null ? ProgressionSystem.Instance.INT * 2f : 0f;
-            CurrentMana = Mathf.Min(CurrentMana + amount, _maxMana + intBonus);
-            OnManaChanged?.Invoke(CurrentMana, _maxMana);
+            CurrentMana = Mathf.Min(CurrentMana + amount, ActualMaxMana);
+            OnManaChanged?.Invoke(CurrentMana, ActualMaxMana);
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]

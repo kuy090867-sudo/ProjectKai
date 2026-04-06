@@ -42,7 +42,8 @@ namespace ProjectKai.UI
 
             if (_player != null && _hpFill != null)
             {
-                float hpRatio = _player.CurrentHealth / 100f;
+                float maxHp = _player.MaxHealth;
+                float hpRatio = maxHp > 0f ? Mathf.Clamp01(_player.CurrentHealth / maxHp) : 0f;
                 _hpFill.fillAmount = hpRatio;
                 // 체력에 따른 색상 변화: 초록 → 노랑 → 빨강
                 if (hpRatio > 0.5f)

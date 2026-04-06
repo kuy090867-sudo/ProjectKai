@@ -57,6 +57,17 @@ namespace ProjectKai.UI
             CreateBtn(canvasObj.transform, "새 게임", new Vector2(0.3f, 0.34f), new Vector2(0.7f, 0.44f), () =>
             {
                 SaveSystem.DeleteSave();
+                // 런타임 상태 초기화
+                if (GameState.Instance != null)
+                {
+                    GameState.Instance.CurrentChapter = 1;
+                    GameState.Instance.Chapter2Unlocked = false;
+                    GameState.Instance.Chapter3Unlocked = false;
+                    GameState.Instance.GameCleared = false;
+                }
+                if (ProgressionSystem.Instance != null)
+                    ProgressionSystem.Instance.LoadData(1, 0, 0, 0, 5, 5, 5);
+                WeaponUpgrade.LoadLevels(1, 1);
                 SceneTransition.Instance?.LoadScene("Stage1_1");
             });
 

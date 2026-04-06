@@ -73,8 +73,12 @@ namespace ProjectKai.UI
             {
                 Time.timeScale = 1f;
                 _isActive = false;
-                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
                 Destroy(canvasObj);
+                string currentScene = SceneManager.GetActiveScene().name;
+                if (SceneTransition.Instance != null)
+                    SceneTransition.Instance.LoadScene(currentScene);
+                else
+                    SceneManager.LoadScene(currentScene);
             });
 
             // 거점으로 버튼
@@ -82,12 +86,12 @@ namespace ProjectKai.UI
             {
                 Time.timeScale = 1f;
                 _isActive = false;
-                // Hub 씬이 없으면 현재 씬 리로드
-                if (SceneExists("Hub"))
-                    SceneManager.LoadScene("Hub");
-                else
-                    SceneManager.LoadScene(SceneManager.GetActiveScene().name);
                 Destroy(canvasObj);
+                string target = SceneExists("Hub") ? "Hub" : SceneManager.GetActiveScene().name;
+                if (SceneTransition.Instance != null)
+                    SceneTransition.Instance.LoadScene(target);
+                else
+                    SceneManager.LoadScene(target);
             });
         }
 

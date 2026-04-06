@@ -270,6 +270,11 @@ namespace ProjectKai.Enemy
             }
         }
 
+        public void ScaleDamage(float multiplier)
+        {
+            _attackDamage *= multiplier;
+        }
+
         private void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.yellow;

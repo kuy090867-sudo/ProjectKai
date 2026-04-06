@@ -29,13 +29,13 @@ namespace ProjectKai.Core
         {
             Vector2 pos = transform.position;
 
-            // 왼쪽 벽
+            // 왼쪽 벽 (트리거 콜라이더 제외)
             var hitLeft = Physics2D.Raycast(pos, Vector2.left, _rayLength, _wallLayer);
-            IsTouchingWallLeft = hitLeft.collider != null && hitLeft.collider != _parentCollider;
+            IsTouchingWallLeft = hitLeft.collider != null && hitLeft.collider != _parentCollider && !hitLeft.collider.isTrigger;
 
-            // 오른쪽 벽
+            // 오른쪽 벽 (트리거 콜라이더 제외)
             var hitRight = Physics2D.Raycast(pos, Vector2.right, _rayLength, _wallLayer);
-            IsTouchingWallRight = hitRight.collider != null && hitRight.collider != _parentCollider;
+            IsTouchingWallRight = hitRight.collider != null && hitRight.collider != _parentCollider && !hitRight.collider.isTrigger;
         }
 
         private void OnDrawGizmosSelected()

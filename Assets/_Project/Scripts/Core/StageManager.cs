@@ -73,6 +73,18 @@ namespace ProjectKai.Core
             // DialogueSystem이 준비될 때까지 대기
             yield return null;
 
+            // 보스 스테이지: 인트로 연출
+            string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+            if (sceneName.Contains("Boss"))
+            {
+                var (bossName, subtitle) = GetBossInfo(_stageName);
+                if (bossName != null)
+                {
+                    UI.BossIntro.Show(bossName, subtitle);
+                    yield return new WaitForSecondsRealtime(3f);
+                }
+            }
+
             if (_introDialogue != null)
             {
                 DialogueSystem.Instance?.StartDialogue(_introDialogue);
@@ -86,6 +98,17 @@ namespace ProjectKai.Core
                     DialogueSystem.Instance?.StartDialogue(lines);
                 }
             }
+        }
+
+        private (string name, string subtitle) GetBossInfo(string stage)
+        {
+            return stage switch
+            {
+                "1-3" => ("수정왕 고블린", "그림자의 실험체"),
+                "2-3" => ("기사단장", "거울 앞에 선 기사"),
+                "3-3" => ("기사단장", "라만차의 기사, 다시 일어서다"),
+                _ => (null, null)
+            };
         }
 
         private void Update()
@@ -102,6 +125,18 @@ namespace ProjectKai.Core
             _totalEnemies++;
             dr.OnDeath += OnEnemyKilled;
             Debug.Log($"[StageManager] 스폰 적 등록. 총 {_totalEnemies}마리");
+        }
+
+        private void OnDestroy()
+        {
+            // 이벤트 구독 해제 — 씬 재로드 시 중복 방지
+            var enemies = GameObject.FindGameObjectsWithTag("Enemy");
+            foreach (var e in enemies)
+            {
+                var dr = e.GetComponent<DamageReceiver>();
+                if (dr != null)
+                    dr.OnDeath -= OnEnemyKilled;
+            }
         }
 
         private void OnEnemyKilled()

@@ -107,12 +107,11 @@ namespace ProjectKai.Player.States
             {
                 _comboSystem.AllowAdvance();
 
-                // 버퍼에 다음 공격 입력이 있으면 연속 콤보
+                // 버퍼에 다음 공격 입력이 있으면 연속 콤보 (상태머신 정상 전환)
                 if (Player.InputBuffer.HasInput(BufferedInput.Attack))
                 {
                     Player.InputBuffer.Consume();
-                    StateTimer = 0f;
-                    Enter();
+                    Player.StateMachine.ForceChangeState(Player.MeleeAttackState);
                     return;
                 }
 

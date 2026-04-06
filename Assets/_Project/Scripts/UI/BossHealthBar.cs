@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using TMPro;
 using ProjectKai.Combat;
 
@@ -22,10 +23,30 @@ namespace ProjectKai.UI
             bhb.Build(bossName);
 
             if (dr != null)
+            {
                 dr.OnHealthChanged += (cur, max) => bhb.UpdateHealth(cur, max);
+                dr.OnDeath += () => bhb.Remove();
+            }
 
             DontDestroyOnLoad(obj);
             return bhb;
+        }
+
+        private void OnEnable()
+        {
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+
+        private void OnDisable()
+        {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+        }
+
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            // 보스 씬이 아닌 곳에서는 자동 제거
+            if (!scene.name.Contains("Boss"))
+                Remove();
         }
 
         private void Build(string bossName)

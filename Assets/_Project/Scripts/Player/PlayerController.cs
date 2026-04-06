@@ -81,6 +81,14 @@ namespace ProjectKai.Player
         public float DashDuration => _dashDuration;
         public float DashCooldown => _dashCooldown;
         public float HitStunDuration => _hitStunDuration;
+        public float MaxHealth
+        {
+            get
+            {
+                float bonus = Core.ProgressionSystem.Instance != null ? Core.ProgressionSystem.Instance.BonusHealth : 0f;
+                return _maxHealth + bonus;
+            }
+        }
 
         // Runtime State
         public int FacingDirection { get; private set; } = 1;
@@ -91,7 +99,7 @@ namespace ProjectKai.Player
         public bool IsMelee { get; private set; } = true;
         public bool IsInvincible { get; set; }
 
-        private float _defaultGravityScale;
+        public float DefaultGravityScale { get; private set; }
 
         private void Awake()
         {
@@ -135,7 +143,7 @@ namespace ProjectKai.Player
             if (GetComponent<Combat.EtherBurst>() == null)
                 gameObject.AddComponent<Combat.EtherBurst>();
 
-            _defaultGravityScale = Rb.gravityScale;
+            DefaultGravityScale = Rb.gravityScale;
             CurrentHealth = _maxHealth;
 
             StateMachine = new StateMachine.StateMachine();
@@ -211,7 +219,7 @@ namespace ProjectKai.Player
 
         public void ResetGravity()
         {
-            Rb.gravityScale = _defaultGravityScale;
+            Rb.gravityScale = DefaultGravityScale;
         }
 
         public bool CanDash()
@@ -295,7 +303,7 @@ namespace ProjectKai.Player
         public void Heal(float amount)
         {
             if (!IsAlive) return;
-            CurrentHealth = Mathf.Min(CurrentHealth + amount, _maxHealth);
+            CurrentHealth = Mathf.Min(CurrentHealth + amount, MaxHealth);
         }
 
         private void OnDeath()

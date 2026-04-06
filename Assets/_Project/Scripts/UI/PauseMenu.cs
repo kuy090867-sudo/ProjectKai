@@ -93,13 +93,13 @@ namespace ProjectKai.UI
             {
                 Resume();
                 Core.SaveSystem.Save();
-                SceneManager.LoadScene("Hub");
+                SceneTransition.Instance?.LoadScene("Hub");
             });
             CreateBtn(_panel.transform, "메인 메뉴", new Vector2(0.35f, 0.14f), new Vector2(0.65f, 0.24f), () =>
             {
                 Resume();
                 Core.SaveSystem.Save();
-                SceneManager.LoadScene("MainMenu");
+                SceneTransition.Instance?.LoadScene("MainMenu");
             });
         }
 

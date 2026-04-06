@@ -105,7 +105,10 @@ github.com/kuy090867-sudo/ProjectKai";
             }
 
             Destroy(canvasObj);
-            SceneManager.LoadScene("MainMenu");
+            if (SceneTransition.Instance != null)
+                SceneTransition.Instance.LoadScene("MainMenu");
+            else
+                SceneManager.LoadScene("MainMenu");
             Destroy(gameObject);
         }
     }

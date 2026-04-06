@@ -59,7 +59,7 @@ namespace ProjectKai.Core
                 if (pc != null)
                 {
                     HealthBarUI.CreateHealthBar(
-                        player.transform, 100f,
+                        player.transform, pc.MaxHealth,
                         new Vector3(0f, 1.3f, 0f),
                         new Color(0.2f, 0.9f, 0.2f),
                         new Vector2(80f, 12f));

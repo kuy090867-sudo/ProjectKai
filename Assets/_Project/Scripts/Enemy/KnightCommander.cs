@@ -218,10 +218,11 @@ namespace ProjectKai.Enemy
 
             // 거점으로 복귀
             yield return new WaitForSeconds(1f);
-            if (SceneExists("Hub"))
-                UnityEngine.SceneManagement.SceneManager.LoadScene("Hub");
+            string target = SceneExists("Hub") ? "Hub" : "MainMenu";
+            if (UI.SceneTransition.Instance != null)
+                UI.SceneTransition.Instance.LoadScene(target);
             else
-                UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
+                UnityEngine.SceneManagement.SceneManager.LoadScene(target);
         }
 
         private void PerformHit(float damage, float knockback)
@@ -237,7 +238,21 @@ namespace ProjectKai.Enemy
             }
         }
 
-        private void OnDamaged(float damage, Vector2 dir) { }
+        private void OnDamaged(float damage, Vector2 dir)
+        {
+            // 피격 리액션: 플래시 + 사운드
+            if (_sr != null)
+                StartCoroutine(HitFlash());
+            AudioManager.Instance?.PlaySFX("hit", 0.5f);
+        }
+
+        private IEnumerator HitFlash()
+        {
+            var origColor = _sr.color;
+            _sr.color = Color.white;
+            yield return new WaitForSeconds(0.05f);
+            _sr.color = origColor;
+        }
 
         private void OnDeath()
         {

@@ -24,11 +24,15 @@ namespace ProjectKai.Core
                 var dr = e.GetComponent<DamageReceiver>();
                 if (dr != null)
                 {
-                    // DamageReceiver의 maxHealth는 private이므로 직접 수정 불가
-                    // 대신 체력을 채워주는 방식으로 간접 스케일링
                     float bonusHP = (hpMultiplier - 1f) * dr.MaxHealth;
                     if (bonusHP > 0f)
                         dr.Heal(bonusHP);
+                }
+
+                var eb = e.GetComponent<EnemyBase>();
+                if (eb != null && dmgMultiplier > 1f)
+                {
+                    eb.ScaleDamage(dmgMultiplier);
                 }
             }
 

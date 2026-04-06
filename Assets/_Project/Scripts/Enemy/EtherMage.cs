@@ -29,6 +29,7 @@ namespace ProjectKai.Enemy
         private float _actionTimer;
         private bool _isActing;
         private int _facingDir = -1;
+        private Vector2 _spawnPosition;
 
         private void Awake()
         {
@@ -41,7 +42,8 @@ namespace ProjectKai.Enemy
         private void Start()
         {
             _fixedY = transform.position.y;
-            _dr.OnDamaged += (d, dir) => StartCoroutine(TeleportAway());
+            _spawnPosition = transform.position;
+            _dr.OnDamaged += (d, dir) => { if (_dr.IsAlive) StartCoroutine(TeleportAway()); };
             _dr.OnDeath += () => Destroy(gameObject, 1f);
 
             var p = GameObject.FindWithTag("Player");
@@ -126,11 +128,13 @@ namespace ProjectKai.Enemy
             if (_sr != null) _sr.color = new Color(0.4f, 0.1f, 0.8f, 0.5f);
             yield return new WaitForSeconds(0.15f);
 
-            // 랜덤 위치로 순간이동
+            // 랜덤 위치로 순간이동 (스폰 지점 기준 범위 제한)
             float offsetX = Random.Range(-_teleportRange, _teleportRange);
-            _rb.MovePosition(new Vector2(
+            float newX = Mathf.Clamp(
                 transform.position.x + offsetX,
-                _fixedY));
+                _spawnPosition.x - _teleportRange * 2f,
+                _spawnPosition.x + _teleportRange * 2f);
+            _rb.MovePosition(new Vector2(newX, _fixedY));
 
             if (_sr != null) _sr.color = Color.white;
         }

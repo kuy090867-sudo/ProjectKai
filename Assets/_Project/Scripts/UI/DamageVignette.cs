@@ -66,7 +66,7 @@ namespace ProjectKai.UI
             _lowHealthAlpha = 0f;
             if (_player != null && _player.IsAlive)
             {
-                float hpPercent = _player.CurrentHealth / 100f;
+                float hpPercent = _player.CurrentHealth / _player.MaxHealth;
                 if (hpPercent < 0.3f)
                     _lowHealthAlpha = (0.3f - hpPercent) * 0.5f * (1f + Mathf.Sin(Time.time * 3f) * 0.3f);
             }
