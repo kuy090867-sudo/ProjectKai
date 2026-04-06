@@ -22,6 +22,12 @@ namespace ProjectKai.UI
             DontDestroyOnLoad(gameObject);
         }
 
+        public void Toggle()
+        {
+            if (_isOpen) Close();
+            else Open();
+        }
+
         public void Open()
         {
             if (_isOpen) return;

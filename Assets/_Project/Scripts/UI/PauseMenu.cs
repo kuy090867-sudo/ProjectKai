@@ -80,10 +80,21 @@ namespace ProjectKai.UI
             titleTmp.color = Color.white;
             titleTmp.alignment = TextAlignmentOptions.Center;
 
-            CreateBtn(_panel.transform, "계속", new Vector2(0.35f, 0.45f), new Vector2(0.65f, 0.55f), Resume);
-            CreateBtn(_panel.transform, "메인 메뉴", new Vector2(0.35f, 0.3f), new Vector2(0.65f, 0.4f), () =>
+            CreateBtn(_panel.transform, "계속", new Vector2(0.35f, 0.5f), new Vector2(0.65f, 0.6f), Resume);
+            CreateBtn(_panel.transform, "설정", new Vector2(0.35f, 0.38f), new Vector2(0.65f, 0.48f), () =>
+            {
+                SettingsMenu.Instance?.Toggle();
+            });
+            CreateBtn(_panel.transform, "거점으로", new Vector2(0.35f, 0.26f), new Vector2(0.65f, 0.36f), () =>
             {
                 Resume();
+                Core.SaveSystem.Save();
+                SceneManager.LoadScene("Hub");
+            });
+            CreateBtn(_panel.transform, "메인 메뉴", new Vector2(0.35f, 0.14f), new Vector2(0.65f, 0.24f), () =>
+            {
+                Resume();
+                Core.SaveSystem.Save();
                 SceneManager.LoadScene("MainMenu");
             });
         }

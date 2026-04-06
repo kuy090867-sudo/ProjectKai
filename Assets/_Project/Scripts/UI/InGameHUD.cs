@@ -42,7 +42,13 @@ namespace ProjectKai.UI
 
             if (_player != null && _hpFill != null)
             {
-                _hpFill.fillAmount = _player.CurrentHealth / 100f;
+                float hpRatio = _player.CurrentHealth / 100f;
+                _hpFill.fillAmount = hpRatio;
+                // 체력에 따른 색상 변화: 초록 → 노랑 → 빨강
+                if (hpRatio > 0.5f)
+                    _hpFill.color = Color.Lerp(new Color(0.9f, 0.9f, 0.2f), new Color(0.2f, 0.9f, 0.3f), (hpRatio - 0.5f) * 2f);
+                else
+                    _hpFill.color = Color.Lerp(new Color(0.9f, 0.2f, 0.2f), new Color(0.9f, 0.9f, 0.2f), hpRatio * 2f);
             }
 
             if (_levelText != null && ProgressionSystem.Instance != null)
