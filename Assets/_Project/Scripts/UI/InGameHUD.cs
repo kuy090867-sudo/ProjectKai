@@ -14,6 +14,7 @@ namespace ProjectKai.UI
         public static InGameHUD Instance { get; private set; }
 
         private Image _hpFill;
+        private Image _mpFill;
         private TextMeshProUGUI _levelText;
         private TextMeshProUGUI _weaponText;
         private PlayerController _player;
@@ -47,7 +48,10 @@ namespace ProjectKai.UI
                 _levelText.text = $"Lv.{ProgressionSystem.Instance.Level}";
 
             if (_weaponText != null && _player != null)
-                _weaponText.text = _player.IsMelee ? "⚔ 검" : "🔫 총";
+                _weaponText.text = _player.IsMelee ? "검" : "총";
+
+            if (_mpFill != null && ManaSystem.Instance != null)
+                _mpFill.fillAmount = ManaSystem.Instance.ManaPercent;
         }
 
         private void CreateHUD()
@@ -83,6 +87,29 @@ namespace ProjectKai.UI
             _hpFill.color = new Color(0.2f, 0.9f, 0.3f);
             _hpFill.type = Image.Type.Filled;
             _hpFill.fillMethod = Image.FillMethod.Horizontal;
+
+            // MP 배경
+            var mpBg = new GameObject("MPBg");
+            mpBg.transform.SetParent(canvasObj.transform, false);
+            var mpBgRect = mpBg.AddComponent<RectTransform>();
+            mpBgRect.anchorMin = new Vector2(0.02f, 0.88f);
+            mpBgRect.anchorMax = new Vector2(0.18f, 0.92f);
+            mpBgRect.offsetMin = Vector2.zero;
+            mpBgRect.offsetMax = Vector2.zero;
+            mpBg.AddComponent<Image>().color = new Color(0.15f, 0.15f, 0.25f, 0.8f);
+
+            // MP Fill
+            var mpFillObj = new GameObject("MPFill");
+            mpFillObj.transform.SetParent(mpBg.transform, false);
+            var mpFillRect = mpFillObj.AddComponent<RectTransform>();
+            mpFillRect.anchorMin = new Vector2(0.02f, 0.1f);
+            mpFillRect.anchorMax = new Vector2(0.98f, 0.9f);
+            mpFillRect.offsetMin = Vector2.zero;
+            mpFillRect.offsetMax = Vector2.zero;
+            _mpFill = mpFillObj.AddComponent<Image>();
+            _mpFill.color = new Color(0.3f, 0.4f, 0.9f);
+            _mpFill.type = Image.Type.Filled;
+            _mpFill.fillMethod = Image.FillMethod.Horizontal;
 
             // 레벨
             var lvObj = new GameObject("Level");
