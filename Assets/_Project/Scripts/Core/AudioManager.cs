@@ -15,6 +15,31 @@ namespace ProjectKai.Core
         [Range(0f, 1f)] public float sfxVolume = 0.7f;
         [Range(0f, 1f)] public float bgmVolume = 0.5f;
 
+        /// <summary>SFX 볼륨 프로퍼티. 변경 시 PlayerPrefs에 자동 저장.</summary>
+        public float SfxVolume
+        {
+            get => sfxVolume;
+            set
+            {
+                sfxVolume = Mathf.Clamp01(value);
+                PlayerPrefs.SetFloat("SfxVolume", sfxVolume);
+                PlayerPrefs.Save();
+            }
+        }
+
+        /// <summary>BGM 볼륨 프로퍼티. 변경 시 PlayerPrefs에 자동 저장하고 현재 재생 중인 BGM에 즉시 반영.</summary>
+        public float BgmVolume
+        {
+            get => bgmVolume;
+            set
+            {
+                bgmVolume = Mathf.Clamp01(value);
+                if (_bgmSource != null) _bgmSource.volume = bgmVolume;
+                PlayerPrefs.SetFloat("BgmVolume", bgmVolume);
+                PlayerPrefs.Save();
+            }
+        }
+
         private AudioSource _sfxSource;
         private AudioSource _bgmSource;
         private Dictionary<string, AudioClip> _clips = new Dictionary<string, AudioClip>();
@@ -26,6 +51,10 @@ namespace ProjectKai.Core
             if (Instance != null) { Destroy(gameObject); return; }
             Instance = this;
             DontDestroyOnLoad(gameObject);
+
+            // PlayerPrefs에서 저장된 볼륨 로드
+            sfxVolume = PlayerPrefs.GetFloat("SfxVolume", 0.7f);
+            bgmVolume = PlayerPrefs.GetFloat("BgmVolume", 0.5f);
 
             _sfxSource = gameObject.AddComponent<AudioSource>();
             _sfxSource.playOnAwake = false;

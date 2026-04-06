@@ -84,6 +84,7 @@ namespace ProjectKai.Core
         {
             SetupLinaAnimator();
             CreateHubLighting();
+            StageProgressUI.Show();
         }
 
         // ═══════════════════════════════════════

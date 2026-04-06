@@ -78,7 +78,12 @@ namespace ProjectKai.UI
                 SceneTransition.Instance?.LoadScene("Hub");
             }, hasSave);
 
-            CreateBtn(canvasObj.transform, "종료", new Vector2(0.3f, 0.1f), new Vector2(0.7f, 0.2f), () =>
+            CreateBtn(canvasObj.transform, "설정", new Vector2(0.3f, 0.1f), new Vector2(0.7f, 0.2f), () =>
+            {
+                SettingsMenu.Show();
+            });
+
+            CreateBtn(canvasObj.transform, "종료", new Vector2(0.3f, -0.02f), new Vector2(0.7f, 0.08f), () =>
             {
                 #if UNITY_EDITOR
                 UnityEditor.EditorApplication.isPlaying = false;
