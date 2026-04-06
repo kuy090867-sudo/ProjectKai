@@ -14,6 +14,7 @@ namespace ProjectKai.UI
         private void Start()
         {
             Time.timeScale = 1f;
+            Core.SaveSystem.Load();
             CreateUI();
         }
 
