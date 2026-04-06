@@ -65,7 +65,11 @@ namespace ProjectKai.Player.States
             if (Player.InputBuffer.HasInput(Combat.BufferedInput.Attack))
             {
                 Player.InputBuffer.Consume();
-                Player.StateMachine.ChangeState(Player.MeleeAttackState);
+                // 무기 전환에 따라 근접/원거리 분기
+                if (Player.IsMelee)
+                    Player.StateMachine.ChangeState(Player.MeleeAttackState);
+                else
+                    Player.StateMachine.ChangeState(Player.RangedAttackState);
                 return true;
             }
             if (Player.InputBuffer.HasInput(Combat.BufferedInput.Shoot))

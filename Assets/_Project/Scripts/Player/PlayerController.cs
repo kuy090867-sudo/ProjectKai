@@ -87,6 +87,8 @@ namespace ProjectKai.Player
         public float LastDashTime { get; set; } = -999f;
         public float CurrentHealth { get; private set; }
         public bool IsAlive => CurrentHealth > 0f;
+        public bool IsMelee { get; private set; } = true;
+        private bool _isInvincible;
 
         private float _defaultGravityScale;
 
@@ -156,6 +158,12 @@ namespace ProjectKai.Player
             Input.OnShootPressed += () => InputBuffer.Buffer(BufferedInput.Shoot);
             Input.OnDashPressed += () => InputBuffer.Buffer(BufferedInput.Dash);
             Input.OnJumpPressed += () => InputBuffer.Buffer(BufferedInput.Jump);
+            Input.OnWeaponSwitchPressed += () =>
+            {
+                IsMelee = !IsMelee;
+                Core.AudioManager.Instance?.PlaySFX("dash", 0.3f);
+                Debug.Log($"[Player] 무기 전환: {(IsMelee ? "검" : "총")}");
+            };
         }
 
         private void Update()
@@ -228,22 +236,47 @@ namespace ProjectKai.Player
 
         public void TakeDamage(float damage, Vector2 knockbackDir, float knockbackForce)
         {
-            if (!IsAlive) return;
+            if (!IsAlive || _isInvincible) return;
 
             CurrentHealth -= damage;
             CurrentHealth = Mathf.Max(CurrentHealth, 0f);
 
             ApplyKnockback(knockbackDir, knockbackForce);
 
-            // 피격 리액션
+            // 피격 리액션 (3채널)
             Core.AudioManager.Instance?.PlaySFX("hit", 0.7f);
             Core.GameFeel.Instance?.CameraShake(0.1f, 0.12f);
+            Core.GameFeel.Instance?.HitStop(0.04f);
             SpriteAnim?.ForcePlay("hit");
 
             if (!IsAlive)
             {
                 OnDeath();
             }
+            else
+            {
+                // 무적 프레임
+                StartCoroutine(InvincibilityCoroutine());
+            }
+        }
+
+        private System.Collections.IEnumerator InvincibilityCoroutine()
+        {
+            _isInvincible = true;
+            float timer = 0f;
+            float duration = 0.5f;
+
+            while (timer < duration)
+            {
+                if (SpriteRenderer != null)
+                    SpriteRenderer.enabled = !SpriteRenderer.enabled;
+                yield return new WaitForSeconds(0.05f);
+                timer += 0.05f;
+            }
+
+            if (SpriteRenderer != null)
+                SpriteRenderer.enabled = true;
+            _isInvincible = false;
         }
 
         public void ApplyKnockback(Vector2 direction, float force)

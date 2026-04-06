@@ -43,6 +43,7 @@ namespace ProjectKai.Player.States
             if (Player.GroundCheck.IsGroundedRaw && Player.Rb.linearVelocity.y <= 0f)
             {
                 Player.ResetGravity();
+                Core.AudioManager.Instance?.PlaySFX("land", 0.4f);
 
                 if (Mathf.Abs(Player.Input.MoveInput.x) > 0.1f)
                     Player.StateMachine.ChangeState(Player.RunState);
