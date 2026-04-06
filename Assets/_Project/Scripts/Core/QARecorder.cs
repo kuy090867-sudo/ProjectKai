@@ -13,7 +13,7 @@ namespace ProjectKai.Core
         public static QARecorder Instance { get; private set; }
 
         [SerializeField] private float _captureInterval = 0.2f;
-        [SerializeField] private bool _autoStartOnPlay = true;
+        [SerializeField] private bool _autoStartOnPlay = false;
 
         private string _outputFolder;
         private int _frameCount;
