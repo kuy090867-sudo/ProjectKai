@@ -279,14 +279,8 @@ namespace ProjectKai.Enemy
 
                 minionObj.AddComponent<EnemyBase>();
 
-                // StageManager에 적 추가
-                if (StageManager.Instance != null)
-                {
-                    dmgRecv.OnDeath += () =>
-                    {
-                        // 사망 시 StageManager 카운트 업데이트는 태그 기반으로 자동 처리
-                    };
-                }
+                // StageManager에 스폰된 적 등록
+                StageManager.Instance?.RegisterSpawnedEnemy(dmgRecv);
             }
 
             Debug.Log("[BossGoblin] 졸개 2마리 소환!");

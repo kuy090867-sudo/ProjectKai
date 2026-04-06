@@ -63,6 +63,10 @@ namespace ProjectKai.Core
                 enemyObj.AddComponent<Enemy.EnemyBase>();
                 enemyObj.AddComponent<EnemyReward>();
 
+                // StageManager에 스폰된 적 등록
+                if (StageManager.Instance != null)
+                    StageManager.Instance.RegisterSpawnedEnemy(dr);
+
                 // 체력바
                 UI.HealthBarUI.CreateHealthBar(
                     enemyObj.transform, 50f,

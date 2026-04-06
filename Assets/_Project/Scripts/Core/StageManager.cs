@@ -71,6 +71,16 @@ namespace ProjectKai.Core
                 _stageTime += Time.deltaTime;
         }
 
+        /// <summary>
+        /// 런타임에 스폰된 적을 StageManager에 등록
+        /// </summary>
+        public void RegisterSpawnedEnemy(DamageReceiver dr)
+        {
+            _totalEnemies++;
+            dr.OnDeath += OnEnemyKilled;
+            Debug.Log($"[StageManager] 스폰 적 등록. 총 {_totalEnemies}마리");
+        }
+
         private void OnEnemyKilled()
         {
             _killedEnemies++;
