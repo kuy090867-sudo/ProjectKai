@@ -241,7 +241,8 @@ namespace ProjectKai.Enemy
 
         private void OnDeath()
         {
-            if (_isUnwinnable) return;
+            if (_isUnwinnable) return; // 이길 수 없는 전투에서는 사망 안 함
+
             _defeated = true;
             _isActing = true;
             if (_bossHPBar != null) _bossHPBar.Remove();

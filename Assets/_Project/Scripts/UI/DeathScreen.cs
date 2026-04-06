@@ -15,6 +15,7 @@ namespace ProjectKai.UI
 
         private GameObject _panel;
         private bool _isActive;
+        public bool IsActive => _isActive;
 
         private void Awake()
         {

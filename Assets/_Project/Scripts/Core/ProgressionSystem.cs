@@ -73,6 +73,20 @@ namespace ProjectKai.Core
             return true;
         }
 
+        /// <summary>
+        /// 세이브 데이터 로드용. SaveSystem에서 호출.
+        /// </summary>
+        public void LoadData(int level, int exp, int statPoints, int gold, int str, int dex, int intStat)
+        {
+            Level = level;
+            Experience = exp;
+            StatPoints = statPoints;
+            Gold = gold;
+            STR = str;
+            DEX = dex;
+            INT = intStat;
+        }
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Initialize()
         {

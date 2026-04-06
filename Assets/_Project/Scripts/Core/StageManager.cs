@@ -130,13 +130,14 @@ namespace ProjectKai.Core
             yield return new WaitForSeconds(1f);
 
             // 클리어 대사: 직렬화 데이터 없으면 코드에서 자동 로드
+            DialogueLine[] clearLines = null;
             if (_clearDialogue != null)
             {
                 DialogueSystem.Instance?.StartDialogue(_clearDialogue);
             }
             else
             {
-                var clearLines = StageDialogueContent.GetClearDialogue(_stageName);
+                clearLines = StageDialogueContent.GetClearDialogue(_stageName);
                 if (clearLines != null && clearLines.Length > 0)
                 {
                     DialogueSystem.Instance?.EnsureUI();
@@ -154,6 +155,7 @@ namespace ProjectKai.Core
             // 2-3 패배 씬일 경우 특수 처리
             if (_stageName == "2-3")
             {
+                // 패배 연출 → Hub로 강제 이동
                 SceneTransition.Instance?.LoadScene("Hub");
                 yield break;
             }
@@ -163,12 +165,12 @@ namespace ProjectKai.Core
             {
                 GameState.Instance?.CompleteGame();
                 SaveSystem.Save();
-                CreditsScreen.Show();
+                UI.CreditsScreen.Show();
                 yield break;
             }
 
             // 결과 화면
-            StageResult.Instance?.Show(_stageName, _stageTime, _killedEnemies, _nextSceneName);
+            UI.StageResult.Instance?.Show(_stageName, _stageTime, _killedEnemies, _nextSceneName);
         }
 
         private void UpdateGameProgress()
@@ -177,10 +179,10 @@ namespace ProjectKai.Core
 
             switch (_stageName)
             {
-                case "1-3":
+                case "1-3": // 1장 클리어 → 2장 해금
                     GameState.Instance.UnlockChapter(2);
                     break;
-                case "2-3":
+                case "2-3": // 2장 패배 → 3장 해금
                     GameState.Instance.UnlockChapter(3);
                     break;
             }
@@ -188,6 +190,7 @@ namespace ProjectKai.Core
 
         private IEnumerator ShowBossRoomText()
         {
+            // 보스방 문구 표시 (2초간)
             yield return new WaitForSeconds(0.5f);
 
             var lines = new DialogueLine[]
@@ -201,6 +204,9 @@ namespace ProjectKai.Core
             DialogueSystem.Instance?.StartDialogue(lines);
         }
 
+        /// <summary>
+        /// 런타임에 도입 대사를 코드로 생성
+        /// </summary>
         public void SetIntroDialogue(DialogueLine[] lines)
         {
             var data = ScriptableObject.CreateInstance<DialogueDataSO>();
@@ -210,7 +216,7 @@ namespace ProjectKai.Core
 
         /// <summary>
         /// 씬 이름에 "Stage"가 포함되면 자동으로 StageManager 생성.
-        /// Stage1_1 -> "1-1", Stage1_3_Boss -> "1-3"
+        /// 씬 이름에서 스테이지 번호 추출: Stage1_1 → "1-1", Stage2_3_Boss → "2-3"
         /// </summary>
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void AutoInitialize()
@@ -220,17 +226,20 @@ namespace ProjectKai.Core
             string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
             if (!sceneName.StartsWith("Stage")) return;
 
+            // Stage1_1 → "1-1", Stage1_3_Boss → "1-3"
             string stripped = sceneName.Replace("Stage", "").Replace("_Boss", "");
+            // "1_1" → "1-1"
             string stageName = stripped.Replace("_", "-");
 
             var obj = new GameObject("StageManager");
             var sm = obj.AddComponent<StageManager>();
 
+            // 리플렉션으로 _stageName 설정 (SerializeField)
             var field = typeof(StageManager).GetField("_stageName",
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             field?.SetValue(sm, stageName);
 
-            Debug.Log($"[StageManager] 자동 생성: {sceneName} -> 스테이지 {stageName}");
+            Debug.Log($"[StageManager] 자동 생성: {sceneName} → 스테이지 {stageName}");
         }
     }
 }

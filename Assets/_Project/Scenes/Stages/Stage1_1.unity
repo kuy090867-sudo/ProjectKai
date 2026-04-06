@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 96426626}
   - component: {fileID: 96426625}
   - component: {fileID: 96426624}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -509,6 +509,8 @@ MonoBehaviour:
   _wallSpritePath: Sprites/Tiles/wall_mid
   _groundColor: {r: 0.4, g: 0.3, b: 0.2, a: 1}
   _wallColor: {r: 0.3, g: 0.25, b: 0.2, a: 1}
+  _addPlatforms: 1
+  _platformCount: 3
 --- !u!114 &718999472
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -633,6 +635,7 @@ MonoBehaviour:
   _flashDuration: 0.1
   _iFrameDuration: 0.5
   _iFrameBlinkInterval: 0.05
+  _deathFadeDuration: 0.6
 --- !u!61 &950297318
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -786,6 +789,7 @@ MonoBehaviour:
   _flashDuration: 0.1
   _iFrameDuration: 0.5
   _iFrameBlinkInterval: 0.05
+  _deathFadeDuration: 0.6
 --- !u!61 &1069217558
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1561,6 +1565,7 @@ MonoBehaviour:
   _flashDuration: 0.1
   _iFrameDuration: 0.5
   _iFrameBlinkInterval: 0.05
+  _deathFadeDuration: 0.6
 --- !u!61 &1562526822
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1678,7 +1683,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49598feb2676ae64f9ea79a8aa555680, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectKai.Core.GroundCheck
-  _rayLength: 0.1
+  _rayLength: 0.3
   _raySpacing: 0.15
   _boxSize: {x: 0.4, y: 0.1}
   _coyoteTime: 0.1

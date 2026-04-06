@@ -50,11 +50,15 @@ namespace ProjectKai.Core
 
             if (prog != null)
             {
-                // ProgressionSystem의 private 필드는 직접 접근 불가
-                // Reflection 또는 public 메서드로 처리
-                int savedGold = PlayerPrefs.GetInt("Gold", 0);
-                if (savedGold > prog.Gold)
-                    prog.AddGold(savedGold - prog.Gold);
+                prog.LoadData(
+                    PlayerPrefs.GetInt("Level", 1),
+                    PlayerPrefs.GetInt("Exp", 0),
+                    PlayerPrefs.GetInt("StatPoints", 0),
+                    PlayerPrefs.GetInt("Gold", 0),
+                    PlayerPrefs.GetInt("STR", 5),
+                    PlayerPrefs.GetInt("DEX", 5),
+                    PlayerPrefs.GetInt("INT", 5)
+                );
             }
 
             if (state != null)
@@ -64,6 +68,10 @@ namespace ProjectKai.Core
                 state.Chapter3Unlocked = PlayerPrefs.GetInt("Ch3Unlocked", 0) == 1;
                 state.GameCleared = PlayerPrefs.GetInt("GameCleared", 0) == 1;
             }
+
+            WeaponUpgrade.LoadLevels(
+                PlayerPrefs.GetInt("SwordLevel", 1),
+                PlayerPrefs.GetInt("GunLevel", 1));
 
             Debug.Log("[SaveSystem] 로드 완료");
         }

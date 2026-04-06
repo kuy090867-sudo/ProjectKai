@@ -35,6 +35,10 @@ namespace ProjectKai.UI
         public void Pause()
         {
             if (_isPaused) return;
+            // 대화 중이거나 사망 화면 중에는 일시정지 안 함
+            if (DialogueSystem.Instance != null && DialogueSystem.Instance.IsActive) return;
+            if (DeathScreen.Instance != null && DeathScreen.Instance.IsActive) return;
+
             _isPaused = true;
             Time.timeScale = 0f;
             CreateUI();

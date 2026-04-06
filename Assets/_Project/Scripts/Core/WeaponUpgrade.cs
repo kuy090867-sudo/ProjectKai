@@ -18,6 +18,12 @@ namespace ProjectKai.Core
         public static float SwordDamageBonus => (SwordLevel - 1) * 3f;
         public static float GunDamageBonus => (GunLevel - 1) * 2f;
 
+        public static void LoadLevels(int sword, int gun)
+        {
+            SwordLevel = Mathf.Max(1, sword);
+            GunLevel = Mathf.Max(1, gun);
+        }
+
         public static bool UpgradeSword()
         {
             var prog = ProgressionSystem.Instance;
