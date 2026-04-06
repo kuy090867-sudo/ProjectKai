@@ -130,6 +130,10 @@ namespace ProjectKai.Player
             if (_rangedWeaponData == null)
                 _rangedWeaponData = RuntimeDataCache.MagicPistol;
 
+            // 에테르 폭발 스킬 자동 추가
+            if (GetComponent<Combat.EtherBurst>() == null)
+                gameObject.AddComponent<Combat.EtherBurst>();
+
             _defaultGravityScale = Rb.gravityScale;
             CurrentHealth = _maxHealth;
 
