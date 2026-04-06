@@ -7,7 +7,9 @@ namespace ProjectKai.Core
     /// <summary>
     /// QA 테스트 녹화: Play 모드 중 0.2초 간격으로 스크린샷을 저장.
     /// 테스트 종료 시 캡처 폴더 경로를 출력.
+    /// 에디터 전용 — 빌드에서는 제외됨.
     /// </summary>
+#if UNITY_EDITOR
     public class QARecorder : MonoBehaviour
     {
         public static QARecorder Instance { get; private set; }
@@ -103,4 +105,5 @@ namespace ProjectKai.Core
             }
         }
     }
+#endif
 }

@@ -118,6 +118,9 @@ namespace ProjectKai.Core
                 }
             }
 
+            // NPC 스프라이트 — Hub 씬에서 리나 등 NPC 자동 할당
+            AutoAssignNpcSprites();
+
             // Environment — 플레이스홀더 유지 (타일은 나중에 Tilemap으로)
             var envParent = GameObject.Find("Environment");
             if (envParent != null)
@@ -126,6 +129,38 @@ namespace ProjectKai.Core
                 {
                     if (sr.sprite == null)
                         sr.sprite = CreatePlaceholder();
+                }
+            }
+        }
+
+        private void AutoAssignNpcSprites()
+        {
+            string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+            if (sceneName != "Hub") return;
+
+            // NPC_Lina 오브젝트 검색 (HubManager가 생성하거나 씬에 이미 존재)
+            var lina = GameObject.Find("NPC_Lina");
+            if (lina != null)
+            {
+                var sr = lina.GetComponentInChildren<SpriteRenderer>();
+                if (sr != null && sr.sprite == null)
+                {
+                    sr.sprite = LoadPixelSprite("Sprites/NPC/elf_f_idle_anim_f0");
+                    sr.color = Color.white;
+                    if (sr.sprite == null) sr.sprite = CreatePlaceholder();
+                }
+
+                // SpriteAnimator 자동 설정
+                var anim = lina.GetComponentInChildren<SpriteAnimator>();
+                if (anim == null)
+                {
+                    var spriteChild = lina.GetComponentInChildren<SpriteRenderer>();
+                    if (spriteChild != null)
+                        anim = spriteChild.gameObject.AddComponent<SpriteAnimator>();
+                }
+                if (anim != null)
+                {
+                    anim.ConfigureEnemy("Sprites/NPC", "elf_f");
                 }
             }
         }
