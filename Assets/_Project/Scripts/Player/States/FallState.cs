@@ -21,6 +21,14 @@ namespace ProjectKai.Player.States
             if (TryDash()) return;
             if (TryAttack()) return;
 
+            // 벽 슬라이드
+            var wallCheck = Player.GetComponentInChildren<Core.WallCheck>();
+            if (wallCheck != null && wallCheck.IsTouchingWall && Player.Rb.linearVelocity.y < 0f)
+            {
+                Player.StateMachine.ChangeState(Player.WallSlideState);
+                return;
+            }
+
             // 코요테 타임 점프
             if (Player.InputBuffer.HasInput(BufferedInput.Jump) && Player.GroundCheck.IsGrounded)
             {

@@ -62,6 +62,7 @@ namespace ProjectKai.Player
         public DashState DashState { get; private set; }
         public MeleeAttackState MeleeAttackState { get; private set; }
         public RangedAttackState RangedAttackState { get; private set; }
+        public WallSlideState WallSlideState { get; private set; }
 
         // Combat
         public ComboSystem ComboSystem { get; private set; }
@@ -148,6 +149,7 @@ namespace ProjectKai.Player
             if (_meleeComboData != null)
                 ComboSystem.SetComboData(_meleeComboData);
 
+            WallSlideState = new WallSlideState(this);
             MeleeAttackState = new MeleeAttackState(this, ComboSystem, _damageDealer, _enemyLayer);
             RangedAttackState = new RangedAttackState(this, _firePoint);
             if (_rangedWeaponData != null)
