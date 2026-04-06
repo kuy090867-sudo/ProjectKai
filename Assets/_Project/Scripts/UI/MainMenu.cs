@@ -49,9 +49,9 @@ namespace ProjectKai.UI
                 SceneManager.LoadScene("Stage1_1");
             });
 
-            CreateMenuButton(canvasObj.transform, "테스트 스테이지", new Vector2(0.35f, 0.2f), new Vector2(0.65f, 0.3f), () =>
+            CreateMenuButton(canvasObj.transform, "이어하기", new Vector2(0.35f, 0.2f), new Vector2(0.65f, 0.3f), () =>
             {
-                SceneManager.LoadScene("TestStage");
+                SceneManager.LoadScene("Hub");
             });
 
             CreateMenuButton(canvasObj.transform, "종료", new Vector2(0.35f, 0.08f), new Vector2(0.65f, 0.18f), () =>

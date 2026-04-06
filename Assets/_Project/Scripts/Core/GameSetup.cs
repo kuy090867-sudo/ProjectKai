@@ -12,11 +12,22 @@ namespace ProjectKai.Core
         private void Awake()
         {
             AutoAssignSprites();
+            AutoAddEnemyRewards();
         }
 
         private void Start()
         {
             CreateHealthBars();
+        }
+
+        private void AutoAddEnemyRewards()
+        {
+            var enemies = GameObject.FindGameObjectsWithTag("Enemy");
+            foreach (var e in enemies)
+            {
+                if (e.GetComponent<EnemyReward>() == null)
+                    e.AddComponent<EnemyReward>();
+            }
         }
 
         private void CreateHealthBars()
