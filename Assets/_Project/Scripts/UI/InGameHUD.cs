@@ -15,6 +15,7 @@ namespace ProjectKai.UI
 
         private Image _hpFill;
         private Image _mpFill;
+        private Image _expFill;
         private TextMeshProUGUI _levelText;
         private TextMeshProUGUI _weaponText;
         private PlayerController _player;
@@ -52,6 +53,13 @@ namespace ProjectKai.UI
 
             if (_mpFill != null && ManaSystem.Instance != null)
                 _mpFill.fillAmount = ManaSystem.Instance.ManaPercent;
+
+            if (_expFill != null && ProgressionSystem.Instance != null)
+            {
+                int exp = ProgressionSystem.Instance.Experience;
+                int needed = ProgressionSystem.Instance.Level * 100;
+                _expFill.fillAmount = needed > 0 ? (float)exp / needed : 0f;
+            }
         }
 
         private void CreateHUD()
@@ -110,6 +118,28 @@ namespace ProjectKai.UI
             _mpFill.color = new Color(0.3f, 0.4f, 0.9f);
             _mpFill.type = Image.Type.Filled;
             _mpFill.fillMethod = Image.FillMethod.Horizontal;
+
+            // EXP 바 (HP 아래 가는 바)
+            var expBg = new GameObject("EXPBg");
+            expBg.transform.SetParent(canvasObj.transform, false);
+            var expBgRect = expBg.AddComponent<RectTransform>();
+            expBgRect.anchorMin = new Vector2(0.02f, 0.865f);
+            expBgRect.anchorMax = new Vector2(0.22f, 0.88f);
+            expBgRect.offsetMin = Vector2.zero;
+            expBgRect.offsetMax = Vector2.zero;
+            expBg.AddComponent<Image>().color = new Color(0.15f, 0.15f, 0.15f, 0.6f);
+
+            var expFillObj = new GameObject("EXPFill");
+            expFillObj.transform.SetParent(expBg.transform, false);
+            var expFillRect = expFillObj.AddComponent<RectTransform>();
+            expFillRect.anchorMin = new Vector2(0.01f, 0.1f);
+            expFillRect.anchorMax = new Vector2(0.99f, 0.9f);
+            expFillRect.offsetMin = Vector2.zero;
+            expFillRect.offsetMax = Vector2.zero;
+            _expFill = expFillObj.AddComponent<Image>();
+            _expFill.color = new Color(0.9f, 0.8f, 0.2f);
+            _expFill.type = Image.Type.Filled;
+            _expFill.fillMethod = Image.FillMethod.Horizontal;
 
             // 레벨
             var lvObj = new GameObject("Level");
