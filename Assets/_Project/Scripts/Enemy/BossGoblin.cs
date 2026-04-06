@@ -18,12 +18,11 @@ namespace ProjectKai.Enemy
     public class BossGoblin : MonoBehaviour
     {
         [Header("Stats")]
-        [SerializeField] private float _moveSpeed = 4f;
+        [SerializeField] private float _chaseSpeed = 4f;
         [SerializeField] private float _chargeSpeed = 12f;
         [SerializeField] private float _attackDamage = 15f;
         [SerializeField] private float _jumpAttackDamage = 25f;
-        [SerializeField] private float _detectionRange = 15f;
-        [SerializeField] private LayerMask _playerLayer;
+        [SerializeField] private float _chaseRange = 15f;
 
         [Header("Attack")]
         [SerializeField] private float _attackCooldown = 2f;
@@ -56,6 +55,8 @@ namespace ProjectKai.Enemy
             _rb.bodyType = RigidbodyType2D.Kinematic;
         }
 
+        private UI.BossHealthBar _bossHPBar;
+
         private void Start()
         {
             _fixedY = transform.position.y;
@@ -67,6 +68,9 @@ namespace ProjectKai.Enemy
             if (p != null) _player = p.transform;
 
             _actionCooldown = _attackCooldown;
+
+            // 보스 체력바 생성
+            _bossHPBar = UI.BossHealthBar.Create("수정왕 고블린", _dr);
         }
 
         private void Update()

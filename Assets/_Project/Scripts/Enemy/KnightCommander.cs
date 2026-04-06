@@ -44,6 +44,8 @@ namespace ProjectKai.Enemy
             _rb.bodyType = RigidbodyType2D.Kinematic;
         }
 
+        private UI.BossHealthBar _bossHPBar;
+
         private void Start()
         {
             _fixedY = transform.position.y;
@@ -52,6 +54,9 @@ namespace ProjectKai.Enemy
 
             var p = GameObject.FindWithTag("Player");
             if (p != null) _player = p.transform;
+
+            string title = _isUnwinnable ? "기사단장 — 그림자의 검" : "기사단장 — 최종 결전";
+            _bossHPBar = UI.BossHealthBar.Create(title, _dr);
         }
 
         private void Update()
